@@ -1,0 +1,13 @@
+<svg width="41" height="46" viewBox="0 0 41 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="counter-red-small">
+<circle id="Oval Copy 49" cx="20.9756" cy="20.9756" r="20" fill="black"/>
+<circle id="Oval Copy 50" cx="20.9756" cy="25.9756" r="20" fill="black"/>
+<circle id="Oval Copy 51" cx="20.9512" cy="20.9512" r="16.9756" fill="#7F3344"/>
+<mask id="mask0_5_6422" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="4" y="4" width="34" height="34">
+<circle id="Oval Copy 48" cx="20.9756" cy="20.9756" r="16.9756" fill="#FD6687"/>
+</mask>
+<g mask="url(#mask0_5_6422)">
+<circle id="Oval Copy 52" cx="20.9756" cy="24.9756" r="16.9756" fill="#FD6687"/>
+</g>
+</g>
+</svg>
