@@ -12,7 +12,7 @@ export default function Home() {
                     textColor="text-neutral-100"
                     textAlign="text-left"
                     bgImage="bg-[url(../public/player-vs-cpu.svg)]"
-                    path="/vs-computer/difficulty"
+                    path="/vs-computer/select-difficulty"
                 >
                     Play vs CPU
                 </MenuButton>
