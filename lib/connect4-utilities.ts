@@ -5,13 +5,6 @@
 //basic algoritm from:
 //https://codereview.stackexchange.com/a/127105
 
-//board is represented by a 2D array
-//possible values are:
-//-true for the discs of the first player
-//-false for the discs of the second player
-//-null for empty spaces
-type Board = (boolean | null)[][]
-
 export function getWinningSpaces(board: Board): number[][] | [] {
     const height = board[0].length
     const width = board.length

@@ -6,14 +6,9 @@ import {
     getTotalDiscs,
 } from "@/lib/connect4-utilities"
 
-//board represented as 2D array of true, false, & null
-type Board = (boolean | null)[][]
-
 //consective spaces on board
 //adds string type to check for out of bounds spaces
 type Line = (boolean | null | string)[]
-
-type Difficulty = "easy" | "medium" | "hard"
 
 //AI accepts 3 difficulty settings and chooses from
 //the top 3 ranked moves given by a minimax algorithm
