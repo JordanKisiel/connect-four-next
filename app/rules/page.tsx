@@ -1,4 +1,4 @@
-import checkIcon from "../../public/icon-check.svg"
+import checkIcon from "@/public/icon-check.svg"
 import Link from "next/link"
 import Image from "next/image"
 

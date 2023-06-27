@@ -1,7 +1,10 @@
+"use client"
+
 type Props = {
     textColor: string
     bgColor: string
     paddingX: string
+    handler?: Function
     children: React.ReactNode
 }
 
@@ -9,6 +12,7 @@ export default function Button({
     textColor,
     bgColor,
     paddingX,
+    handler,
     children,
 }: Props) {
     return (
@@ -19,6 +23,7 @@ export default function Button({
                 ${paddingX} 
                 py-2 
                 uppercase`}
+            onClick={() => handler}
         >
             {children}
         </button>
