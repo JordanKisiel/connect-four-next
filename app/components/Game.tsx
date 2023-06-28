@@ -7,6 +7,7 @@ import {
     getWinningSpaces,
     isBoardFull,
     getEmptyBoard,
+    isBoardEmpty,
 } from "@/lib/connect4-utilities"
 import { getAIMove } from "@/lib/connect4-AI"
 import logo from "@/public/logo.svg"
@@ -66,16 +67,16 @@ export default function Game({ difficulty }: Props) {
             setIsGameOver(true)
         }
         //otherwise game continues so change player turn
-        //TODO: come back to this if there's a bug where
-        //      the game switches the player turn before a drop occurs
         else {
-            setIsPlayer1Turn((prevValue) => !prevValue)
+            //don't change turns if board is empty as no moves have been made to change the turn
+            if (!isBoardEmpty(board)) {
+                setIsPlayer1Turn((prevValue) => !prevValue)
+            }
         }
     }, [board])
 
     //plays computer move when it's player2's turn
     //the computer is always player 2
-    //TODO: figure out if second dependency array variable is needed
     useEffect(() => {
         if (!isPlayer1Turn) {
             playAIMove(getAIMove(board, difficulty))
@@ -86,9 +87,7 @@ export default function Game({ difficulty }: Props) {
     //calls handleColSelect with delays so player can see what is happening
     //then drops disc in column index
     function playAIMove(colIndex: number) {
-        //is passed to handleColSelect to move to left or right
-        //3 is the index of the center column
-        //in the case that AI move is the center column,
+        //in the case that the center column is selected for a drop
         //handleColSelect will be called 0 times so left/right direction doesn't matter
         const isMoveToLeft = colIndex <= CENTER_COL
         const colMoves = Math.abs(CENTER_COL - colIndex)
@@ -108,16 +107,17 @@ export default function Game({ difficulty }: Props) {
                     if (i === repetitions) {
                         clearInterval(intervalID)
                         resolve("intervals complete")
+                    } else {
+                        callback(isMoveToLeft)
+                        i++
                     }
-
-                    callback(isMoveToLeft)
-
-                    i++
                 }, delay)
             })
 
             return intervalDone
         }
+
+        console.log(colMoves)
 
         delayedColSelectN(
             handleColSelect,
@@ -179,6 +179,8 @@ export default function Game({ difficulty }: Props) {
     }
 
     function handleNewGame() {
+        console.log("new game called")
+
         //empty board
         setBoard(Array(7).fill(Array(6).fill(null)))
 
@@ -326,7 +328,7 @@ export default function Game({ difficulty }: Props) {
                     isPlayer1Turn={isPlayer1Turn}
                     isWinner={getWinningSpaces(board).length !== 0}
                     isBoardFull={isBoardFull(board)}
-                    handleNewGame={handleNewGame}
+                    handler={handleNewGame}
                 />
             )}
         </div>

@@ -4,14 +4,14 @@ type Props = {
     isWinner: boolean
     isBoardFull: boolean
     isPlayer1Turn: boolean
-    handleNewGame: Function
+    handler: Function
 }
 
 export default function ResultDisplay({
     isWinner,
     isBoardFull,
     isPlayer1Turn,
-    handleNewGame,
+    handler,
 }: Props) {
     let player = ""
     let resultText = ""
@@ -57,7 +57,7 @@ export default function ResultDisplay({
                 bgColor="bg-purple-500"
                 textColor="text-neutral-100"
                 paddingX="px-7"
-                handler={() => handleNewGame()}
+                handler={() => handler()}
             >
                 Play Again
             </Button>

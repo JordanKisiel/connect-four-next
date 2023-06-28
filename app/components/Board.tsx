@@ -18,7 +18,9 @@ export default function Board({
     isPlayer1Turn,
     winningSpaces,
 }: Props) {
-    const columns = Array(numColumns).map((col, index) => {
+    const columnArray = Array(numColumns).fill("")
+
+    const columns = columnArray.map((col, index) => {
         return (
             <Column
                 key={index}

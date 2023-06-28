@@ -37,7 +37,9 @@ export default function Column({
                 rowIndex={rowIndex}
                 selectedCol={selectedCol}
             />
-            <div className="mt-[30%] grid grid-rows-6">{spaces}</div>
+            <div id="SPACES_CONTAINER" className="mt-[30%] grid grid-rows-6">
+                {spaces}
+            </div>
         </div>
     )
 }

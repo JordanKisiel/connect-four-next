@@ -23,7 +23,13 @@ export default function Button({
                 ${paddingX} 
                 py-2 
                 uppercase`}
-            onClick={() => handler}
+            onClick={
+                handler
+                    ? () => handler()
+                    : () => {
+                          /* do nothing */
+                      }
+            }
         >
             {children}
         </button>
