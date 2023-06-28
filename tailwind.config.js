@@ -7,10 +7,10 @@ module.exports = {
     ],
     theme: {
         screens: {
-            sm: "500px",
-            md: "750px",
-            lg: "1000px",
-            short: { raw: "(max-height:800px)" },
+            'sm': "500px",
+            'md': "750px",
+            'lg': "1000px",
+            'short': { 'raw': "(max-height:800px)" },
         },
         extend: {
             colors: {
