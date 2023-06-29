@@ -39,6 +39,7 @@ export default function Board({
                 className="absolute top-1 rounded-3xl"
                 src={boardBG}
                 alt="board background"
+                priority={true}
             />
             <div className="absolute left-[50%] grid aspect-square w-[98%] -translate-x-[50%] grid-cols-7">
                 {columns}
@@ -47,6 +48,7 @@ export default function Board({
                 className="absolute top-0 rounded-3xl shadow-2xl"
                 src={boardFG}
                 alt="board foreground"
+                priority={true}
             />
         </div>
     )
