@@ -117,8 +117,6 @@ export default function Game({ difficulty }: Props) {
             return intervalDone
         }
 
-        console.log(colMoves)
-
         delayedColSelectN(
             handleColSelect,
             AI_DELAY,
@@ -179,8 +177,6 @@ export default function Game({ difficulty }: Props) {
     }
 
     function handleNewGame() {
-        console.log("new game called")
-
         //empty board
         setBoard(Array(7).fill(Array(6).fill(null)))
 
