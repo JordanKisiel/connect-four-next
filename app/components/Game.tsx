@@ -214,15 +214,15 @@ export default function Game({ difficulty }: Props) {
                 flex
                 h-full 
                 flex-col 
-                items-center 
-                px-4 
+                items-center  
                 pt-16 
+                px-2
                 ${getBGToUse(
                     isGameOver ? getWinningSpaces(board).length !== 0 : false,
                     isPlayer1Turn
                 )}
                 mx-auto
-                w-[90%] 
+                w-[95%] 
                 bg-[length:100%_30%]
                 bg-bottom
                 bg-no-repeat
