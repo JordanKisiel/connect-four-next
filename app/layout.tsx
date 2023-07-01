@@ -19,7 +19,7 @@ export default function RootLayout({
     return (
         <html lang="en" className={space_grotesk.className}>
             <body className="bg-purple-400">
-                <main className="mx-auto flex h-[100vh] flex-col items-center justify-center p-4 sm:max-w-xl md:justify-start md:pt-[13rem]">
+                <main className="mx-auto flex h-[100vh] flex-col items-center justify-center px-2 sm:max-w-xl md:justify-start md:pt-[13rem]">
                     {children}
                 </main>
             </body>

@@ -6,7 +6,7 @@ export default function Home() {
     return (
         <>
             <Image className="mb-16" src={logo} alt="logo" />
-            <div className="w-full space-y-6">
+            <div className="w-full space-y-6 mx-2 flex flex-col">
                 <MenuButton
                     bgColor="bg-red-300"
                     textColor="text-neutral-100"
