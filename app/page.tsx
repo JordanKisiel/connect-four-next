@@ -5,7 +5,7 @@ import MenuButton from "./components/MenuButton"
 export default function Home() {
     return (
         <>
-            <Image className="mb-16" src={logo} alt="logo" />
+            <Image className="mb-16 md:mt-20 md:mb-20" src={logo} alt="logo" />
             <div className="w-full space-y-6 px-2 flex flex-col">
                 <MenuButton
                     bgColor="bg-red-300"

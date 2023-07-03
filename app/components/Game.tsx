@@ -229,12 +229,12 @@ export default function Game({ difficulty }: Props) {
                 sm:max-w-[30rem]
                 md:w-[80%]
                 md:max-w-[40rem]
-                md:bg-[length:38rem_20rem]
-                md:pt-12
+                md:bg-[length:100%_50%]
+                md:pt-0
                 short:pt-12
                 `}
         >
-            <div className="relative mb-32 flex w-full items-center justify-between short:mb-20">
+            <div className="relative mb-32 flex w-full items-center justify-between short:mb-20 md:mb-24">
                 <Link href="/">
                     <Button
                         bgColor="bg-purple-500"

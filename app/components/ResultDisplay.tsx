@@ -42,8 +42,8 @@ export default function ResultDisplay({
             py-5
             text-neutral-900
             shadow-2xl
-            md:top-[65%]
-            md:w-[65%]
+            md:top-[47%]
+            md:w-[70%]
             lg:top-[65%]
             "
         >
