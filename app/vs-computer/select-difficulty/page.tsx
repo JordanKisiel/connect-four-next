@@ -7,7 +7,7 @@ import Button from "@/app/components/Button"
 export default function Home() {
     return (
         <>
-            <div className="flex w-full flex-col items-center md:mt-20 lg:mt-4">
+            <div className="flex w-full flex-col items-center md:mt-20 lg:mt-24 lg:max-w-[35rem]">
                 <Image className="mb-16" src={logo} alt="logo" />
                 <h2 className="text-center text-3xl font-bold uppercase text-neutral-100  mb-10">
                     Select Difficulty

@@ -29,6 +29,7 @@ export default function RootLayout({
                                  md:justify-start 
                                  md:pt-[6em]
                                  lg:pt-0
+                                 lg:max-w-[45rem]
                                  ">
                     {children}
                 </main>

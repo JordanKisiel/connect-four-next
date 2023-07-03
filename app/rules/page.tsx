@@ -49,7 +49,8 @@ export default async function Rules() {
                         pb-16 
                         pt-12 
                         shadow-2xl
-                        lg:mt-16 
+                        lg:mt-32
+                        lg:max-w-[30rem] 
                         short:space-y-5 
                         short:pt-6">
             <h2 className="text-6xl font-bold uppercase short:text-5xl">

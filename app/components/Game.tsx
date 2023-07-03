@@ -226,14 +226,14 @@ export default function Game({ difficulty }: Props) {
                 bg-[length:100%_30%]
                 bg-bottom
                 bg-no-repeat
-                sm:max-w-[30rem]
-                md:w-[80%]
-                md:max-w-[40rem]
-                md:bg-[length:100%_50%]
+                sm:max-w-[27rem]
+                md:w-[90%]
+                md:bg-[length:100%_40%]
                 md:pt-0
                 short:pt-12
-                lg:w-full
-                lg:bg-[length:100%_40%]
+                lg:pt-24
+                lg:max-w-[34rem]
+                lg:bg-[length:100%_35%]
                 `}
         >
             <div className="relative mb-32 flex w-full items-center justify-between short:mb-20 md:mb-24">
@@ -269,7 +269,7 @@ export default function Game({ difficulty }: Props) {
                 winningSpaces={isGameOver ? getWinningSpaces(board) : []}
             />
 
-            <div className="w-full flex-col items-center md:w-[30rem]">
+            <div className="w-full flex-col items-center md:w-[90%]">
                 {!isGameOver && (
                     <>
                         <div className="mb-12 flex w-full items-center justify-between sm:mb-9 md:mb-8 lg:mb-6 short:mb-4">
