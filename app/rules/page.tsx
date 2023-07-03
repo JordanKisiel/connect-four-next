@@ -34,7 +34,24 @@ export default async function Rules() {
     )
 
     return (
-        <div className="relative flex flex-col mt-20 items-center mx-4 space-y-10 rounded-[40px] border-[3px] border-neutral-900 bg-neutral-100 px-6 pb-16 pt-12 shadow-2xl short:space-y-5 short:pt-6">
+        <div className="relative 
+                        flex 
+                        flex-col 
+                        mt-20 
+                        items-center 
+                        mx-4 
+                        space-y-10 
+                        rounded-[40px] 
+                        border-[3px] 
+                        border-neutral-900 
+                        bg-neutral-100 
+                        px-6 
+                        pb-16 
+                        pt-12 
+                        shadow-2xl
+                        lg:mt-16 
+                        short:space-y-5 
+                        short:pt-6">
             <h2 className="text-6xl font-bold uppercase short:text-5xl">
                 {rules.title}
             </h2>

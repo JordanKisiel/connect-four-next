@@ -44,7 +44,8 @@ export default function ResultDisplay({
             shadow-2xl
             md:top-[47%]
             md:w-[70%]
-            lg:top-[65%]
+            lg:top-[67%]
+            lg:w-[75%]
             "
         >
             <span className="text-center text-base font-bold uppercase md:text-2xl">

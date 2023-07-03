@@ -34,7 +34,7 @@ export default function Board({
     })
 
     return (
-        <div className="relative aspect-square w-full">
+        <div className="relative aspect-square w-full lg:w-[70%]">
             <Image
                 className="absolute top-1 rounded-3xl"
                 src={boardBG}

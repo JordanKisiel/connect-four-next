@@ -232,6 +232,8 @@ export default function Game({ difficulty }: Props) {
                 md:bg-[length:100%_50%]
                 md:pt-0
                 short:pt-12
+                lg:w-full
+                lg:bg-[length:100%_40%]
                 `}
         >
             <div className="relative mb-32 flex w-full items-center justify-between short:mb-20 md:mb-24">
