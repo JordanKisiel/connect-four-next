@@ -7,15 +7,17 @@ module.exports = {
     ],
     theme: {
         screens: {
-            'sm': "375px",
-            'md': "750px",
-            'lg': "1000px",
-            'short': { 'raw': "(max-height:800px)" },
+            sm: "375px",
+            md: "750px",
+            lg: "1000px",
+            short: { raw: "(max-height:800px)" },
         },
         extend: {
             colors: {
                 neutral: {
                     100: "#ffffff",
+                    300: "#cccccc",
+                    600: "#666666",
                     900: "#000000",
                 },
                 purple: {

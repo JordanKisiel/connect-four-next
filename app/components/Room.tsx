@@ -5,12 +5,15 @@ import MenuButton from "./MenuButton"
 
 type Props = {
     roomID: number
+    isSlot1Filled: boolean
+    isSlot2Filled: boolean
 }
 
-export default function Room({ roomID }: Props) {
+export default function Room({ roomID, isSlot1Filled, isSlot2Filled }: Props) {
     function selectPlayer(player: string) {
         socket.emit("select_player", {
-            message: `${player} from room ${roomID} sent some test data`,
+            roomID,
+            playerSlot: player,
         })
     }
 
@@ -35,22 +38,26 @@ export default function Room({ roomID }: Props) {
             <h2 className="mb-3 text-2xl font-bold uppercase short:text-2xl">{`Room ${roomID}`}</h2>
             <div className="flex w-full justify-between gap-6 lg:justify-around lg:gap-12">
                 <MenuButton
-                    bgColor="bg-red-300"
-                    textColor="text-neutral-100"
+                    bgColor={isSlot1Filled ? "bg-neutral-300" : "bg-red-300"}
+                    textColor={
+                        isSlot1Filled ? "text-neutral-600" : "text-neutral-100"
+                    }
                     textAlign="text-center"
                     padding="p-3"
                     handler={() => selectPlayer("player1")}
                 >
-                    Player 1
+                    {isSlot1Filled ? "Filled" : "Player 1"}
                 </MenuButton>
                 <MenuButton
-                    bgColor="bg-yellow-300"
-                    textColor="text-neutral-900"
+                    bgColor={isSlot2Filled ? "bg-neutral-300" : "bg-yellow-300"}
+                    textColor={
+                        isSlot2Filled ? "text-neutral-600" : "text-neutral-900"
+                    }
                     textAlign="text-center"
                     padding="p-3"
                     handler={() => selectPlayer("player2")}
                 >
-                    Player 2
+                    {isSlot2Filled ? "Filled" : "Player 2"}
                 </MenuButton>
             </div>
         </div>

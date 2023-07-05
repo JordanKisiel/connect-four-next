@@ -1,7 +1,7 @@
 "use client"
 
 import { socket } from "@/lib/socket"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import Room from "@/app/components/Room"
@@ -9,15 +9,18 @@ import Button from "@/app/components/Button"
 import logo from "@/public/logo.svg"
 
 export default function Lobby() {
-    //small number of multiplayer rooms just to keep project simple
-    const NUM_OF_ROOMS = 3
+    const [lobby, setLobby] = useState({
+        rooms: [{ isSlot1Filled: false, isSlot2Filled: false }],
+    })
 
-    const roomsArray = Array(NUM_OF_ROOMS).fill("")
+    const roomsArray = Array(lobby.rooms.length).fill("")
     const rooms = roomsArray.map((room, index) => {
         return (
             <Room
                 key={index}
                 roomID={index + 1} //don't want to start from room 0
+                isSlot1Filled={lobby.rooms[index].isSlot1Filled}
+                isSlot2Filled={lobby.rooms[index].isSlot2Filled}
             />
         )
     })
@@ -31,13 +34,37 @@ export default function Lobby() {
             console.log("user disconnected")
         }
 
+        //force connection after manually disconnecting by navigating back
+        socket.connect()
         socket.on("connect", onConnect)
         socket.on("disconnect", onDisconnect)
 
         return () => {
             socket.off("connect", onConnect)
             socket.off("disconnect", onDisconnect)
+            //manually disconnect when navigating away from lobby
+            socket.disconnect()
         }
+    }, [])
+
+    useEffect(() => {
+        function startLobby(lobby: any) {
+            console.log(`lobby started with: ${lobby.rooms.length} rooms`)
+
+            setLobby(lobby)
+        }
+
+        socket.on("start_lobby", (data) => {
+            const lobby = data
+
+            startLobby(lobby)
+        })
+
+        socket.on("slot_filled", (data) => {
+            const lobby = data
+
+            setLobby(lobby)
+        })
     }, [])
 
     return (
