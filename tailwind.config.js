@@ -10,7 +10,6 @@ module.exports = {
             sm: "375px",
             md: "750px",
             lg: "1000px",
-            short: { raw: "(max-height:800px)" },
         },
         extend: {
             colors: {

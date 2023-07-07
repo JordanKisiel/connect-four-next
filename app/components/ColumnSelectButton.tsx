@@ -32,7 +32,7 @@ export default function ColumnSelectButton({
             onClick={() => handleColSelect(isLeft)}
         >
             <Image
-                className="md:w-[150%] short:w-[80%]"
+                className="md:w-[150%]"
                 src={isLeft ? leftOption : rightOption}
                 alt={isLeft ? "move left" : "move right"}
             />

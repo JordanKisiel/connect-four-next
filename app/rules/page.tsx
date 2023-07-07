@@ -27,19 +27,23 @@ export default async function Rules() {
 
     const procedureList: React.ReactNode[] = rules.content.howTo.procedure.map(
         (step: string) => (
-            <li key={step} className="pl-3">
+            <li
+                key={step}
+                className="pl-3"
+            >
                 {step}
             </li>
         )
     )
 
     return (
-        <div className="relative 
+        <div
+            className="relative 
+                        mx-4 
+                        mt-20 
                         flex 
                         flex-col 
-                        mt-20 
                         items-center 
-                        mx-4 
                         space-y-10 
                         rounded-[40px] 
                         border-[3px] 
@@ -49,14 +53,12 @@ export default async function Rules() {
                         pb-16 
                         pt-12 
                         shadow-2xl
-                        lg:mt-32
+                        lg:mt-24
                         lg:max-w-[30rem] 
-                        short:space-y-5 
-                        short:pt-6">
-            <h2 className="text-6xl font-bold uppercase short:text-5xl">
-                {rules.title}
-            </h2>
-            <div className="space-y-4 short:space-y-2">
+                        "
+        >
+            <h2 className="text-6xl font-bold uppercase">{rules.title}</h2>
+            <div className="space-y-4">
                 <h3 className="text-xl font-bold uppercase text-purple-400">
                     {rules.content.objective.header}
                 </h3>
@@ -70,9 +72,15 @@ export default async function Rules() {
                 </h3>
                 <ol className="ml-3 space-y-3 leading-5">{procedureList}</ol>
             </div>
-            <Link href="/" className="absolute -bottom-10 flex aspect-square">
+            <Link
+                href="/"
+                className="absolute -bottom-10 flex aspect-square"
+            >
                 <button>
-                    <Image src={checkIcon} alt="Check icon" />
+                    <Image
+                        src={checkIcon}
+                        alt="Check icon"
+                    />
                 </button>
             </Link>
         </div>

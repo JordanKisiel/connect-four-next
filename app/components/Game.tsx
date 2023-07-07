@@ -215,8 +215,8 @@ export default function Game({ difficulty }: Props) {
                 h-full 
                 flex-col 
                 items-center  
-                pt-16 
-                px-2
+                px-2 
+                pt-16
                 ${getBGToUse(
                     isGameOver ? getWinningSpaces(board).length !== 0 : false,
                     isPlayer1Turn
@@ -230,13 +230,12 @@ export default function Game({ difficulty }: Props) {
                 md:w-[90%]
                 md:bg-[length:100%_40%]
                 md:pt-0
-                short:pt-12
-                lg:pt-24
                 lg:max-w-[34rem]
                 lg:bg-[length:100%_35%]
+                lg:pt-24
                 `}
         >
-            <div className="relative mb-32 flex w-full items-center justify-between short:mb-20 md:mb-24">
+            <div className="relative mb-32 flex w-full items-center justify-between md:mb-24">
                 <Link href="/">
                     <Button
                         bgColor="bg-purple-500"
@@ -272,7 +271,7 @@ export default function Game({ difficulty }: Props) {
             <div className="w-full flex-col items-center md:w-[90%]">
                 {!isGameOver && (
                     <>
-                        <div className="mb-12 flex w-full items-center justify-between sm:mb-9 md:mb-8 lg:mb-6 short:mb-4">
+                        <div className="mb-12 flex w-full items-center justify-between sm:mb-9 md:mb-8 lg:mb-6">
                             <ColumnSelectButton
                                 isPlayer1Turn={isPlayer1Turn}
                                 isLeft={true}
