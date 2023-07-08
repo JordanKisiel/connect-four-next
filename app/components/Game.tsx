@@ -232,7 +232,7 @@ export default function Game({ difficulty }: Props) {
                 md:pt-0
                 lg:max-w-[34rem]
                 lg:bg-[length:100%_35%]
-                lg:pt-24
+                lg:pt-[8%]
                 `}
         >
             <div className="relative mb-32 flex w-full items-center justify-between md:mb-24">
@@ -268,7 +268,7 @@ export default function Game({ difficulty }: Props) {
                 winningSpaces={isGameOver ? getWinningSpaces(board) : []}
             />
 
-            <div className="w-full flex-col items-center md:w-[90%]">
+            <div className="w-full flex-col items-center md:w-[90%] lg:w-[80%]">
                 {!isGameOver && (
                     <>
                         <div className="mb-12 flex w-full items-center justify-between sm:mb-9 md:mb-8 lg:mb-6">
