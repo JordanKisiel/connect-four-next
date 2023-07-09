@@ -236,7 +236,7 @@ export default function Game({ difficulty }: Props) {
                 lg:pt-[8%]
                 `}
         >
-            <div className="relative mb-32 flex w-full items-center justify-between md:mb-24">
+            <div className="relative mb-24 flex w-full items-center justify-between md:mb-24">
                 <Link href="/">
                     <Button
                         bgColor="bg-purple-500"

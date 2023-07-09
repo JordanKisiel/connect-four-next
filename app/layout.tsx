@@ -17,20 +17,27 @@ export default function RootLayout({
     children: React.ReactNode
 }) {
     return (
-        <html lang="en" className={space_grotesk.className}>
+        <html
+            lang="en"
+            className={space_grotesk.className}
+        >
             <body className="bg-purple-400">
-                <main className="mx-auto 
-                                 flex h-[100vh] 
+                <main
+                    className="mx-auto 
+                                 flex 
+                                 h-[100vh] 
                                  flex-col 
                                  items-center 
                                  justify-center 
                                  px-2 
-                                 sm:max-w-xl 
-                                 md:justify-start 
-                                 md:pt-[6em]
+                                 sm:aspect-[50/100] 
+                                 md:aspect-[60/100]
+                                 md:justify-start
+                                 md:pt-[5%] 
+                                 lg:aspect-[70/100]
                                  lg:pt-0
-                                 lg:max-w-[45rem]
-                                 ">
+                                 "
+                >
                     {children}
                 </main>
             </body>
