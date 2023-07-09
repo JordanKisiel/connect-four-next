@@ -19,8 +19,11 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
     console.log(`User connected: ${socket.id}`)
 
+    //inital send of lobby state on connecting
     io.emit("start_lobby", lobby)
 
+    //whenever a client selects a player slot on the client
+    //the server updates the lobby state and sends it back to the client
     socket.on("select_player", (data) => {
         toggleSlotState(data.roomID, data.playerSlot)
         io.emit("slot_filled", lobby)
