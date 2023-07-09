@@ -1,6 +1,6 @@
-import Game from "@/app/components/Game"
+import { Difficulty } from "@/types"
 
-type Difficulty = "easy" | "medium" | "hard"
+import Game from "@/app/components/Game"
 
 type Params = {
     params: {

@@ -1,3 +1,4 @@
+import { Board, Difficulty } from "@/types"
 import {
     getLastMove,
     getWinningSpaces,

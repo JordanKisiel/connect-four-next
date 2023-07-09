@@ -1,3 +1,5 @@
+import { Board } from "@/types"
+
 //if a winning line is found
 //returns array of coordinates of the 4 winning spaces
 //otherwise returns an empty array

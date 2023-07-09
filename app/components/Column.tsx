@@ -1,5 +1,6 @@
 import Space from "./Space"
 import ColumnIndicator from "./ColumnIndicator"
+import { Board } from "@/types"
 
 type Props = {
     board: Board
@@ -37,7 +38,10 @@ export default function Column({
                 rowIndex={rowIndex}
                 selectedCol={selectedCol}
             />
-            <div id="SPACES_CONTAINER" className="mt-[30%] grid grid-rows-6">
+            <div
+                id="SPACES_CONTAINER"
+                className="mt-[30%] grid grid-rows-6"
+            >
                 {spaces}
             </div>
         </div>
