@@ -34,13 +34,14 @@ export default function Room({ roomID, isSlot1Filled, isSlot2Filled }: Props) {
                 shadow-2xl 
                 "
         >
-            <h2 className="mb-3 text-2xl font-bold uppercase">{`Room ${roomID}`}</h2>
+            <h2 className="mb-3 text-2xl font-bold uppercase sm:text-xl">{`Room ${roomID}`}</h2>
             <div className="flex w-full justify-between gap-6 lg:justify-around lg:gap-12">
                 <MenuButton
                     bgColor={isSlot1Filled ? "bg-neutral-300" : "bg-red-300"}
                     textColor={
                         isSlot1Filled ? "text-neutral-600" : "text-neutral-100"
                     }
+                    textSize="sm:text-lg md:text-2xl"
                     textAlign="text-center"
                     padding="p-3"
                     handler={() => selectPlayer("player1")}
@@ -52,6 +53,7 @@ export default function Room({ roomID, isSlot1Filled, isSlot2Filled }: Props) {
                     textColor={
                         isSlot2Filled ? "text-neutral-600" : "text-neutral-900"
                     }
+                    textSize="sm:text-lg md:text-2xl"
                     textAlign="text-center"
                     padding="p-3"
                     handler={() => selectPlayer("player2")}

@@ -5,6 +5,7 @@ import Link from "next/link"
 type Props = {
     bgColor: string
     textColor: string
+    textSize?: string
     bgImage?: string
     textAlign: string
     padding?: string
@@ -16,6 +17,7 @@ type Props = {
 export default function MenuButton({
     bgColor,
     textColor,
+    textSize,
     bgImage,
     textAlign,
     padding,
@@ -25,11 +27,15 @@ export default function MenuButton({
 }: Props) {
     if (path) {
         return (
-            <Link className="block" href={path}>
+            <Link
+                className="block"
+                href={path}
+            >
                 <button
                     className={`
                 ${bgColor} 
-                ${textColor} 
+                ${textColor}
+                ${textSize || "text-2xl"} 
                 ${bgImage} 
                 ${textAlign} 
                 ${padding || "p-5"}
@@ -39,7 +45,6 @@ export default function MenuButton({
                 border-neutral-900
                 bg-[center_right_1rem]
                 bg-no-repeat
-                text-2xl
                 font-bold
                 uppercase
                 shadow-2xl
@@ -55,7 +60,8 @@ export default function MenuButton({
         <button
             className={`
                 ${bgColor} 
-                ${textColor} 
+                ${textColor}
+                ${textSize || "text-2xl"}  
                 ${bgImage} 
                 ${textAlign} 
                 ${padding || "p-5"}
