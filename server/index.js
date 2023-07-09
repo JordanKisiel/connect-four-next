@@ -1,4 +1,4 @@
-import { lobby, toggleSlotState } from "./lobby.js"
+import { lobby, fillPlayerSlot, removePlayer } from "./lobby.js"
 
 import express from "express"
 const app = express()
@@ -25,8 +25,19 @@ io.on("connection", (socket) => {
     //whenever a client selects a player slot on the client
     //the server updates the lobby state and sends it back to the client
     socket.on("select_player", (data) => {
-        toggleSlotState(data.roomID, data.playerSlot)
-        io.emit("slot_filled", lobby)
+        console.log(lobby)
+        fillPlayerSlot(data.roomID, data.playerSlot, socket.id)
+        console.log(lobby)
+        io.emit("lobby_updated", lobby)
+    })
+
+    socket.on("disconnect", (reason) => {
+        console.log(`User disconnected: ${socket.id}`)
+
+        removePlayer(socket.id)
+        io.emit("lobby_updated", lobby)
+
+        console.log(lobby)
     })
 })
 

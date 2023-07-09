@@ -10,7 +10,7 @@ import logo from "@/public/logo.svg"
 
 export default function Lobby() {
     const [lobby, setLobby] = useState({
-        rooms: [{ isSlot1Filled: false, isSlot2Filled: false }],
+        rooms: [{ playerSlot1: "", playerSlot2: "" }],
     })
 
     const roomsArray = Array(lobby.rooms.length).fill("")
@@ -19,8 +19,8 @@ export default function Lobby() {
             <Room
                 key={index}
                 roomID={index + 1} //don't want to start from room 0
-                isSlot1Filled={lobby.rooms[index].isSlot1Filled}
-                isSlot2Filled={lobby.rooms[index].isSlot2Filled}
+                isSlot1Filled={lobby.rooms[index].playerSlot1 !== ""}
+                isSlot2Filled={lobby.rooms[index].playerSlot2 !== ""}
             />
         )
     })
@@ -60,7 +60,7 @@ export default function Lobby() {
             startLobby(lobby)
         })
 
-        socket.on("slot_filled", (data) => {
+        socket.on("lobby_updated", (data) => {
             const lobby = data
 
             setLobby(lobby)

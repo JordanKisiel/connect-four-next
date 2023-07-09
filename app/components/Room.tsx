@@ -44,7 +44,13 @@ export default function Room({ roomID, isSlot1Filled, isSlot2Filled }: Props) {
                     textSize="sm:text-lg md:text-2xl"
                     textAlign="text-center"
                     padding="p-3"
-                    handler={() => selectPlayer("player1")}
+                    handler={
+                        isSlot1Filled
+                            ? () => {
+                                  /* do nothing */
+                              }
+                            : () => selectPlayer("player1")
+                    }
                 >
                     {isSlot1Filled ? "Filled" : "Player 1"}
                 </MenuButton>
@@ -56,7 +62,13 @@ export default function Room({ roomID, isSlot1Filled, isSlot2Filled }: Props) {
                     textSize="sm:text-lg md:text-2xl"
                     textAlign="text-center"
                     padding="p-3"
-                    handler={() => selectPlayer("player2")}
+                    handler={
+                        isSlot2Filled
+                            ? () => {
+                                  /* do nothing */
+                              }
+                            : () => selectPlayer("player2")
+                    }
                 >
                     {isSlot2Filled ? "Filled" : "Player 2"}
                 </MenuButton>
