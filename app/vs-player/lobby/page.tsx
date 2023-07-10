@@ -27,50 +27,15 @@ export default function Lobby() {
     })
 
     useEffect(() => {
-        function onConnect() {
-            console.log("user connected")
-        }
+        socket.emit("start_lobby")
 
-        function onDisconnect() {
-            console.log("user disconnected")
-        }
-
-        const sessionID = localStorage.getItem("sessionID")
-
-        if (sessionID) {
-            socket.auth = { sessionID }
-            socket.connect()
-        }
-
-        socket.on("connect", onConnect)
-        socket.on("disconnect", onDisconnect)
-        socket.on("session", ({ sessionID }) => {
-            //attach the session ID to the next reconnection attempts
-            socket.auth = { sessionID }
-            //store it in local storage
-            localStorage.setItem("sessionID", sessionID)
-        })
-
-        return () => {
-            socket.off("connect", onConnect)
-            socket.off("disconnect", onDisconnect)
-            //manually disconnect when navigating away from lobby
-            socket.disconnect()
-        }
-    }, [])
-
-    useEffect(() => {
         function startLobby(lobby: Lobby) {
             console.log(`lobby started with: ${lobby.rooms.length} rooms`)
 
             setLobby(lobby)
         }
 
-        socket.on("start_lobby", (data) => {
-            const lobby = data
-
-            startLobby(lobby)
-        })
+        socket.on("start_lobby", (data) => startLobby(data))
 
         socket.on("lobby_updated", (data) => {
             const lobby = data

@@ -63,7 +63,9 @@ io.on("connection", (socket) => {
     })
 
     //inital send of lobby state on connecting
-    io.emit("start_lobby", lobby)
+    socket.on("start_lobby", () => {
+        io.emit("start_lobby", lobby)
+    })
 
     //whenever a client selects a player slot on the client
     //the server updates the lobby state and sends it back to the client
