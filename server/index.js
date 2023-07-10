@@ -1,4 +1,4 @@
-import { lobby, fillPlayerSlot, removePlayer } from "./lobby.js"
+import { lobby, fillPlayerSlot, removePlayer, findPlayer } from "./lobby.js"
 import { InMemorySessionStore } from "./sessionStore.js"
 
 import crypto from "crypto"
@@ -55,14 +55,6 @@ io.on("connection", (socket) => {
         sessionID: socket.sessionID,
     })
 
-    //fetch existing users
-    const users = []
-    sessionStore.findAllSessions().forEach((session) => {
-        users.push({
-            connected: session.connected,
-        })
-    })
-
     //lobby events
     socket.on("start_lobby", () => {
         socket.join("lobby")
@@ -78,7 +70,15 @@ io.on("connection", (socket) => {
     //whenever a client selects a player slot on the client
     //the server updates the lobby state and sends it back to the client
     socket.on("select_player", (data) => {
+        //remove player from current room if they're in one
+        const { roomID, playerSlot } = findPlayer(socket.sessionID)
+        if (roomID !== "" && playerSlot !== "") {
+            socket.leave(`Room ${roomID + 1}`)
+        }
+
         fillPlayerSlot(data.roomID, data.playerSlot, socket.sessionID)
+        socket.join(`Room ${data.roomID}`)
+        console.log(socket.rooms)
 
         io.to("lobby").emit("lobby_updated", lobby)
         console.log(lobby)

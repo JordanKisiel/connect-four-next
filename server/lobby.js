@@ -13,7 +13,7 @@ export const lobby = {
     rooms: roomsArray,
 }
 
-//look for playerID in lobby and return
+//look for playerID in lobby and returns
 //roomID & playerSlot
 //if playerID not found, roomID & playerSlot will return
 //with empty string values
@@ -45,8 +45,6 @@ export function findPlayer(playerID) {
 export function fillPlayerSlot(roomID, playerSlot, playerID) {
     const currentLocation = findPlayer(playerID)
 
-    console.log(currentLocation)
-
     if (playerSlot === "player1") {
         //subtract 1 from roomID because frontend starts counting from 1
         lobby.rooms[roomID - 1].playerSlot1 = playerID
@@ -57,12 +55,11 @@ export function fillPlayerSlot(roomID, playerSlot, playerID) {
     }
 
     if (currentLocation.roomID !== "" && currentLocation.playerSlot !== "") {
-        console.log("clearing previous")
         lobby.rooms[currentLocation.roomID][currentLocation.playerSlot] = ""
     }
 }
 
-function emptyPlayerSlot(roomID, playerSlot) {
+export function emptyPlayerSlot(roomID, playerSlot) {
     if (playerSlot === "player1") {
         //subtract 1 from roomID because frontend starts counting from 1
         lobby.rooms[roomID - 1].playerSlot1 = ""
