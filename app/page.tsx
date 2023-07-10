@@ -6,6 +6,10 @@ import logo from "../public/logo.svg"
 import MenuButton from "./components/MenuButton"
 import { socket } from "@/lib/socket"
 
+type SessionData = {
+    sessionID: string
+}
+
 export default function Home() {
     useEffect(() => {
         //get the session id if it exists
@@ -24,20 +28,27 @@ export default function Home() {
             console.log("user disconnected")
         }
 
-        socket.on("connect", onConnect)
-        socket.on("disconnect", onDisconnect)
-        socket.on("session", ({ sessionID }) => {
+        function onSession(data: SessionData) {
+            console.log("session established")
+            const { sessionID } = data
             //attach the session ID to the next reconnection attempts
             socket.auth = { sessionID }
             //store it in local storage
             localStorage.setItem("sessionID", sessionID)
-        })
+        }
+
+        socket.on("connect", onConnect)
+        socket.on("disconnect", onDisconnect)
+        socket.on("session", ({ sessionID }) => {})
 
         socket.connect()
+        //used when user nagivates back to home page from the lobby page
+        socket.emit("leave_lobby")
 
         return () => {
             socket.off("connect", onConnect)
             socket.off("disconnect", onDisconnect)
+            socket.off("session", onSession)
         }
     }, [])
 

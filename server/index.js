@@ -24,6 +24,7 @@ const io = new Server(server, {
     },
 })
 
+//grab the session id from the client if it exists
 io.use((socket, next) => {
     const sessionID = socket.handshake.auth.sessionID
 
@@ -49,7 +50,7 @@ io.on("connection", (socket) => {
         connected: true,
     })
 
-    //emit session details
+    //emit session id
     socket.emit("session", {
         sessionID: socket.sessionID,
     })
@@ -62,9 +63,16 @@ io.on("connection", (socket) => {
         })
     })
 
-    //inital send of lobby state on connecting
+    //lobby events
     socket.on("start_lobby", () => {
-        io.emit("start_lobby", lobby)
+        socket.join("lobby")
+        io.to("lobby").emit("lobby_updated", lobby)
+    })
+
+    socket.on("leave_lobby", () => {
+        socket.leave("lobby")
+        removePlayer(socket.sessionID)
+        io.to("lobby").emit("lobby_updated", lobby)
     })
 
     //whenever a client selects a player slot on the client
@@ -72,7 +80,7 @@ io.on("connection", (socket) => {
     socket.on("select_player", (data) => {
         fillPlayerSlot(data.roomID, data.playerSlot, socket.sessionID)
 
-        io.emit("lobby_updated", lobby)
+        io.to("lobby").emit("lobby_updated", lobby)
         console.log(lobby)
     })
 
@@ -80,12 +88,11 @@ io.on("connection", (socket) => {
         console.log(`User disconnected: ${socket.sessionID}`)
 
         const matchingSockets = await io.in(socket.sessionID).fetchSockets()
-        console.log(matchingSockets.length)
         const isDisconnected = matchingSockets.length === 0
 
         if (isDisconnected) {
             removePlayer(socket.sessionID)
-            io.emit("lobby_updated", lobby)
+            io.to("lobby").emit("lobby_updated", lobby)
 
             sessionStore.saveSession(socket.sessionID, {
                 connected: false,

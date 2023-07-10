@@ -27,21 +27,17 @@ export default function Lobby() {
     })
 
     useEffect(() => {
-        socket.emit("start_lobby")
-
-        function startLobby(lobby: Lobby) {
-            console.log(`lobby started with: ${lobby.rooms.length} rooms`)
-
-            setLobby(lobby)
-        }
-
-        socket.on("start_lobby", (data) => startLobby(data))
-
         socket.on("lobby_updated", (data) => {
             const lobby = data
 
             setLobby(lobby)
         })
+
+        socket.emit("start_lobby")
+
+        return () => {
+            socket.off("lobby_updated")
+        }
     }, [])
 
     return (
