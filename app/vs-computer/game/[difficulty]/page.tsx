@@ -11,7 +11,7 @@ type Params = {
 export default function Page({ params }: Params) {
     return (
         <>
-            <Game difficulty={params.difficulty}></Game>
+            <Game difficulty={params.difficulty} />
         </>
     )
 }
