@@ -35,10 +35,21 @@ export default function Lobby() {
             console.log("user disconnected")
         }
 
-        //force connection after manually disconnecting by navigating back
-        socket.connect()
+        const sessionID = localStorage.getItem("sessionID")
+
+        if (sessionID) {
+            socket.auth = { sessionID }
+            socket.connect()
+        }
+
         socket.on("connect", onConnect)
         socket.on("disconnect", onDisconnect)
+        socket.on("session", ({ sessionID }) => {
+            //attach the session ID to the next reconnection attempts
+            socket.auth = { sessionID }
+            //store it in local storage
+            localStorage.setItem("sessionID", sessionID)
+        })
 
         return () => {
             socket.off("connect", onConnect)

@@ -3,7 +3,7 @@ export const NUM_OF_ROOMS = 3 //keep rooms small for simplicity
 const roomsArray = Array(NUM_OF_ROOMS)
 for (let i = 0; i < roomsArray.length; i += 1) {
     roomsArray[i] = {
-        //initialize all player slots to false when server starts
+        //initialize all player slots to empty string when server starts
         playerSlot1: "",
         playerSlot2: "",
     }
