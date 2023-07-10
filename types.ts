@@ -7,3 +7,10 @@ export type Board = (boolean | null)[][]
 
 //allowable difficulty settings
 export type Difficulty = "easy" | "medium" | "hard"
+
+export type Lobby = {
+    rooms: {
+        playerSlot1: string
+        playerSlot2: string
+    }[]
+}

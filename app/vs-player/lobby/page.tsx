@@ -4,6 +4,7 @@ import { socket } from "@/lib/socket"
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
+import { Lobby } from "@/types"
 import Room from "@/app/components/Room"
 import Button from "@/app/components/Button"
 import logo from "@/public/logo.svg"
@@ -48,7 +49,7 @@ export default function Lobby() {
     }, [])
 
     useEffect(() => {
-        function startLobby(lobby: any) {
+        function startLobby(lobby: Lobby) {
             console.log(`lobby started with: ${lobby.rooms.length} rooms`)
 
             setLobby(lobby)
