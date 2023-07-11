@@ -10,18 +10,16 @@ import Button from "@/app/components/Button"
 import logo from "@/public/logo.svg"
 
 export default function Lobby() {
-    const [lobby, setLobby] = useState({
-        rooms: [{ playerSlot1: "", playerSlot2: "" }],
-    })
+    const [lobby, setLobby] = useState([{ playerSlot1: "", playerSlot2: "" }])
 
-    const roomsArray = Array(lobby.rooms.length).fill("")
+    const roomsArray = Array(lobby.length).fill("")
     const rooms = roomsArray.map((room, index) => {
         return (
             <Room
                 key={index}
                 roomID={index + 1} //don't want to start from room 0
-                isSlot1Filled={lobby.rooms[index].playerSlot1 !== ""}
-                isSlot2Filled={lobby.rooms[index].playerSlot2 !== ""}
+                isSlot1Filled={lobby[index].playerSlot1 !== ""}
+                isSlot2Filled={lobby[index].playerSlot2 !== ""}
             />
         )
     })

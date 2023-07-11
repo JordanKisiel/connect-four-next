@@ -1,4 +1,4 @@
-import { lobby, fillPlayerSlot, removePlayer, findPlayer } from "./lobby.js"
+import { Lobby } from "./lobby.js"
 import { InMemorySessionStore } from "./sessionStore.js"
 
 import crypto from "crypto"
@@ -17,12 +17,16 @@ const randomId = () => {
 
 const sessionStore = new InMemorySessionStore()
 
+const NUM_LOBBY_ROOMS = 3 //keep number of rooms small for simplicity
+
 const io = new Server(server, {
     cors: {
         origin: "http://localhost:3000",
         methods: ["GET", "POST"],
     },
 })
+
+const lobby = new Lobby(NUM_LOBBY_ROOMS, io)
 
 //grab the session id from the client if it exists
 io.use((socket, next) => {
@@ -37,6 +41,7 @@ io.use((socket, next) => {
         }
     }
 
+    //otherwise generate a new session id
     socket.sessionID = randomId()
     console.log(`generated session id: ${socket.sessionID}`)
     next()
@@ -55,34 +60,7 @@ io.on("connection", (socket) => {
         sessionID: socket.sessionID,
     })
 
-    //lobby events
-    socket.on("start_lobby", () => {
-        socket.join("lobby")
-        io.to("lobby").emit("lobby_updated", lobby)
-    })
-
-    socket.on("leave_lobby", () => {
-        socket.leave("lobby")
-        removePlayer(socket.sessionID)
-        io.to("lobby").emit("lobby_updated", lobby)
-    })
-
-    //whenever a client selects a player slot on the client
-    //the server updates the lobby state and sends it back to the client
-    socket.on("select_player", (data) => {
-        //remove player from current room if they're in one
-        const { roomID, playerSlot } = findPlayer(socket.sessionID)
-        if (roomID !== "" && playerSlot !== "") {
-            socket.leave(`Room ${roomID + 1}`)
-        }
-
-        fillPlayerSlot(data.roomID, data.playerSlot, socket.sessionID)
-        socket.join(`Room ${data.roomID}`)
-        console.log(socket.rooms)
-
-        io.to("lobby").emit("lobby_updated", lobby)
-        console.log(lobby)
-    })
+    lobby.addUser(socket)
 
     socket.on("disconnect", async () => {
         console.log(`User disconnected: ${socket.sessionID}`)
@@ -91,13 +69,11 @@ io.on("connection", (socket) => {
         const isDisconnected = matchingSockets.length === 0
 
         if (isDisconnected) {
-            removePlayer(socket.sessionID)
-            io.to("lobby").emit("lobby_updated", lobby)
+            lobby.removePlayer(socket.sessionID)
 
             sessionStore.saveSession(socket.sessionID, {
                 connected: false,
             })
-            console.log(lobby)
         }
     })
 })

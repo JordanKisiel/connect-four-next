@@ -10,8 +10,8 @@ type Props = {
 }
 
 export default function Room({ roomID, isSlot1Filled, isSlot2Filled }: Props) {
-    function selectPlayer(player: string) {
-        socket.emit("select_player", {
+    function selectSlot(player: string) {
+        socket.emit("select_slot", {
             roomID,
             playerSlot: player,
         })
@@ -49,7 +49,7 @@ export default function Room({ roomID, isSlot1Filled, isSlot2Filled }: Props) {
                             ? () => {
                                   /* do nothing */
                               }
-                            : () => selectPlayer("player1")
+                            : () => selectSlot("player1")
                     }
                 >
                     {isSlot1Filled ? "Filled" : "Player 1"}
@@ -67,7 +67,7 @@ export default function Room({ roomID, isSlot1Filled, isSlot2Filled }: Props) {
                             ? () => {
                                   /* do nothing */
                               }
-                            : () => selectPlayer("player2")
+                            : () => selectSlot("player2")
                     }
                 >
                     {isSlot2Filled ? "Filled" : "Player 2"}
