@@ -39,9 +39,9 @@ export default function Lobby() {
     }, [])
 
     return (
-        <div className="mx-auto flex h-[100vh] w-[95%] flex-col items-center justify-center md:w-[75%] lg:w-[60%]">
+        <div className="mx-auto flex w-[95%] flex-col items-center justify-center md:w-[75%] lg:w-[80%]">
             <Image
-                className="mb-16 sm:hidden md:block"
+                className="mb-8 mt-4 sm:hidden md:block"
                 src={logo}
                 alt="logo"
             />

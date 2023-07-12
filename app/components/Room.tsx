@@ -21,7 +21,8 @@ export default function Room({ roomID, isSlot1Filled, isSlot2Filled }: Props) {
         <div
             className="
                 relative 
-                flex w-full 
+                flex 
+                w-full 
                 flex-col 
                 items-center 
                 rounded-[40px] 
