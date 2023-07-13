@@ -1,4 +1,4 @@
-import { Board } from "@/types"
+import { Board } from "../types.ts"
 
 //if a winning line is found
 //returns array of coordinates of the 4 winning spaces

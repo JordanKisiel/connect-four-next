@@ -15,5 +15,8 @@
         "nodemon": "^2.0.22",
         "socket.io": "^4.7.1"
     },
-    "type": "module"
+    "type": "module",
+    "devDependencies": {
+        "typescript": "^5.1.6"
+    }
 }
