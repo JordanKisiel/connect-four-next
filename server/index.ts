@@ -4,8 +4,10 @@ import { InMemorySessionStore } from "./sessionStore.js"
 import crypto from "crypto"
 import express from "express"
 import { createServer } from "http"
-import { Server } from "socket.io"
+import { Server, Socket } from "socket.io"
 import cors from "cors"
+
+type SessionSocket = Socket & { sessionID: string }
 
 const app = express()
 app.use(cors()) //use cors middleware
@@ -27,51 +29,56 @@ const io = new Server(server, {
 })
 
 const lobby = new Lobby(NUM_LOBBY_ROOMS, io)
+let sessionSocket: SessionSocket
 
 //grab the session id from the client if it exists
 io.use((socket, next) => {
+    sessionSocket = Object.assign(socket, { sessionID: "" })
+
     const sessionID = socket.handshake.auth.sessionID
 
     if (sessionID) {
         //find existing session
         const session = sessionStore.findSession(sessionID)
         if (session) {
-            socket.sessionID = sessionID
+            sessionSocket.sessionID = sessionID
             return next()
         }
     }
 
     //otherwise generate a new session id
-    socket.sessionID = randomId()
-    console.log(`generated session id: ${socket.sessionID}`)
+    sessionSocket.sessionID = randomId()
+    console.log(`generated session id: ${sessionSocket.sessionID}`)
     next()
 })
 
 io.on("connection", (socket) => {
-    console.log(`User connected: ${socket.sessionID}`)
+    console.log(`User connected: ${sessionSocket.sessionID}`)
 
     //persist session
-    sessionStore.saveSession(socket.sessionID, {
+    sessionStore.saveSession(sessionSocket.sessionID, {
         connected: true,
     })
 
     //emit session id
-    socket.emit("session", {
-        sessionID: socket.sessionID,
+    sessionSocket.emit("session", {
+        sessionID: sessionSocket.sessionID,
     })
 
-    lobby.addUser(socket)
+    lobby.addUser(sessionSocket)
 
     socket.on("disconnect", async () => {
-        console.log(`User disconnected: ${socket.sessionID}`)
+        console.log(`User disconnected: ${sessionSocket.sessionID}`)
 
-        const matchingSockets = await io.in(socket.sessionID).fetchSockets()
+        const matchingSockets = await io
+            .in(sessionSocket.sessionID)
+            .fetchSockets()
         const isDisconnected = matchingSockets.length === 0
 
         if (isDisconnected) {
-            lobby.removePlayer(socket.sessionID)
+            lobby.removePlayer(sessionSocket.sessionID)
 
-            sessionStore.saveSession(socket.sessionID, {
+            sessionStore.saveSession(sessionSocket.sessionID, {
                 connected: false,
             })
         }
