@@ -53,9 +53,9 @@ export default function Home() {
     }, [])
 
     return (
-        <>
+        <div className="mt-[-5rem] flex w-full flex-col items-center">
             <Image
-                className="mb-16 md:mb-20 md:mt-20 lg:mt-32"
+                className="mb-16 md:mb-20"
                 src={logo}
                 alt="logo"
             />
@@ -87,6 +87,6 @@ export default function Home() {
                     Game Rules
                 </MenuButton>
             </div>
-        </>
+        </div>
     )
 }

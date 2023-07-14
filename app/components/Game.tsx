@@ -215,9 +215,9 @@ export default function Game({ difficulty }: Props) {
                 flex
                 h-full 
                 flex-col 
-                items-center  
+                items-center
+                justify-center  
                 px-2 
-                pt-16
                 ${getBGToUse(
                     isGameOver ? getWinningSpaces(board).length !== 0 : false,
                     isPlayer1Turn
@@ -230,10 +230,8 @@ export default function Game({ difficulty }: Props) {
                 sm:max-w-[27rem]
                 md:w-[90%]
                 md:bg-[length:100%_40%]
-                md:pt-0
                 lg:max-w-[34rem]
                 lg:bg-[length:100%_35%]
-                lg:pt-[8%]
                 `}
         >
             <div className="relative mb-24 flex w-full items-center justify-between md:mb-24">

@@ -26,13 +26,12 @@ export default function RootLayout({
                     className="mx-auto 
                                  flex 
                                  h-[100vh] 
-                                 flex-col 
+                                 flex-row 
                                  items-center 
                                  justify-center 
                                  px-2 
                                  sm:aspect-[50/100] 
                                  md:aspect-[60/100]
-                                 md:justify-start
                                  md:pt-[5%] 
                                  lg:aspect-[70/100]
                                  lg:pt-0

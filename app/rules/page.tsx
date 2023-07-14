@@ -38,9 +38,9 @@ export default async function Rules() {
 
     return (
         <div
-            className="relative 
+            className="
+                        relative 
                         mx-4 
-                        mt-20 
                         flex 
                         flex-col 
                         items-center 
@@ -53,7 +53,6 @@ export default async function Rules() {
                         pb-16 
                         pt-12 
                         shadow-2xl
-                        lg:mt-24
                         lg:max-w-[30rem] 
                         "
         >
