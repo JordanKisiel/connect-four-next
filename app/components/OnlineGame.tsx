@@ -140,7 +140,8 @@ export default function Game() {
                 flex
                 h-full 
                 flex-col 
-                items-center  
+                items-center
+                justify-center  
                 px-2 
                 pt-16
                 ${getBGToUse(
@@ -176,6 +177,13 @@ export default function Game() {
                     src={logo}
                     alt="logo"
                 />
+                <Button
+                    bgColor="bg-red-300"
+                    textColor="text-neutral-900"
+                    paddingX="px-8"
+                >
+                    Forfeit
+                </Button>
             </div>
 
             <Board

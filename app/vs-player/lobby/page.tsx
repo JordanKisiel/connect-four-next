@@ -45,7 +45,7 @@ export default function Lobby() {
                 src={logo}
                 alt="logo"
             />
-            <h2 className="mb-10 text-center text-3xl font-bold uppercase  text-neutral-100 sm:my-3 sm:text-2xl md:my-8 md:text-3xl lg:my-4 lg:text-2xl">
+            <h2 className="mb-10 text-center text-3xl font-bold uppercase text-neutral-100 sm:my-3 sm:text-2xl md:my-8 md:text-3xl lg:my-4 lg:text-2xl">
                 Select Room
             </h2>
             <div className="w-full space-y-6">{rooms}</div>
