@@ -98,21 +98,7 @@ export default function Game() {
             })
 
             //reset selected column back to middle after move is made
-            setSelectedCol(3)
-        }
-    }
-
-    function handleRestart() {
-        //only allow restarts before current game ends
-        if (!isGameOver) {
-            //empty board
-            setBoard(getEmptyBoard(BOARD_ROWS, BOARD_COLS))
-
-            //return selected column to middle
             setSelectedCol(CENTER_COL)
-
-            //set turn back to first player
-            setIsPlayer1Turn(isPlayer1First)
         }
     }
 
@@ -190,14 +176,6 @@ export default function Game() {
                     src={logo}
                     alt="logo"
                 />
-                <Button
-                    bgColor="bg-purple-500"
-                    textColor="text-neutral-100"
-                    paddingX="px-6"
-                    handler={handleRestart}
-                >
-                    Restart
-                </Button>
             </div>
 
             <Board

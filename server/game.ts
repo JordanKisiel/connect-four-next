@@ -1,4 +1,8 @@
-import { getEmptyBoard } from "../lib/connect4-utilities.ts"
+import {
+    getEmptyBoard,
+    getWinningSpaces,
+    isBoardFull,
+} from "../lib/connect4-utilities.ts"
 import { Board } from "../types.ts"
 
 const BOARD_ROWS = 6
@@ -39,6 +43,7 @@ export class Game {
         }
     }
 
+    //handles player moves and updates board
     dropDisc(colIndex: number, isFirstPlayerDisc: boolean) {
         //only drop in col if there's an open slot
         if (this.board[colIndex].some((slot) => slot === null)) {
@@ -60,7 +65,29 @@ export class Game {
             })
         }
 
+        //detect if there is a win
+        const isWin = getWinningSpaces(this.board).length !== 0
+        //if there is a win or draw, the game is over
+        if (isWin || isBoardFull(this.board)) {
+            this.isGameOver = true
+        } else {
+            //otherwise play continues so change player turn
+            this.isPlayer1Turn = !this.isPlayer1Turn
+        }
+
         //reset selected col to center col after move
         this.selectedCol = CENTER_COL
+    }
+
+    //sets up a new game if the players choose to play again
+    startNewGame() {
+        this.board = getEmptyBoard(BOARD_ROWS, BOARD_COLS)
+        this.selectedCol = CENTER_COL
+        //player that makes the first move of the new
+        //game is the player who went second in the previous
+        this.isPlayer1First = !this.isPlayer1First
+        this.isPlayer1Turn = this.isPlayer1First
+
+        this.isGameOver = false
     }
 }
