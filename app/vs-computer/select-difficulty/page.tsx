@@ -7,7 +7,7 @@ import Button from "@/app/components/Button"
 export default function Home() {
     return (
         <>
-            <div className="flex w-full flex-col items-center lg:max-w-[35rem]">
+            <div className="flex w-full flex-col items-center md:max-w-[30rem] lg:max-w-[35rem]">
                 <Image
                     className="mb-16"
                     src={logo}

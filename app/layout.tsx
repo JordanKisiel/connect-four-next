@@ -30,7 +30,7 @@ export default function RootLayout({
                                  items-center 
                                  justify-center 
                                  px-2 
-                                 sm:aspect-[50/100] 
+                                 sm:aspect-[45/100] 
                                  md:aspect-[60/100]
                                  md:pt-[5%] 
                                  lg:aspect-[70/100]

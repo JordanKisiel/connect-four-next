@@ -48,6 +48,7 @@ export default function MenuButton({
                 font-bold
                 uppercase
                 shadow-2xl
+                sm:bg-none
                 `}
                 >
                     {children}
@@ -75,6 +76,7 @@ export default function MenuButton({
                 font-bold
                 uppercase
                 shadow-2xl
+                sm:bg-none
                 `}
             onClick={
                 handler

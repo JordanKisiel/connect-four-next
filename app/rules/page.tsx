@@ -40,36 +40,48 @@ export default async function Rules() {
         <div
             className="
                         relative 
-                        mx-4 
                         flex 
                         flex-col 
                         items-center 
-                        space-y-10 
                         rounded-[40px] 
                         border-[3px] 
                         border-neutral-900 
                         bg-neutral-100 
-                        px-6 
-                        pb-16 
-                        pt-12 
+                        px-6  
                         shadow-2xl
-                        lg:max-w-[30rem] 
+                        sm:mx-4
+                        sm:space-y-4
+                        sm:pb-11
+                        sm:pt-6
+                        md:mx-20
+                        md:space-y-6
+                        md:pb-16
+                        md:pt-12
+                        lg:mx-0
+                        lg:max-w-[30rem]
+                        lg:space-y-4
+                        lg:pb-12
+                        lg:pt-8
                         "
         >
-            <h2 className="text-6xl font-bold uppercase">{rules.title}</h2>
-            <div className="space-y-4">
-                <h3 className="text-xl font-bold uppercase text-purple-400">
+            <h2 className="font-bold uppercase sm:text-3xl md:text-5xl lg:text-4xl">
+                {rules.title}
+            </h2>
+            <div className="sm:space-y-2 md:space-y-4 lg:space-y-3">
+                <h3 className="font-bold uppercase text-purple-400 sm:text-lg md:text-2xl lg:text-xl">
                     {rules.content.objective.header}
                 </h3>
-                <p className="leading-5">
+                <p className="leading-5 sm:text-sm md:text-lg">
                     {rules.content.objective.description}
                 </p>
             </div>
-            <div className="space-y-4">
-                <h3 className="text-xl font-bold uppercase text-purple-400">
+            <div className="sm:space-y-2 md:space-y-4 lg:space-y-3">
+                <h3 className="font-bold uppercase text-purple-400 sm:text-lg md:text-2xl lg:text-xl">
                     {rules.content.howTo.header}
                 </h3>
-                <ol className="ml-3 space-y-3 leading-5">{procedureList}</ol>
+                <ol className="ml-3 space-y-3 leading-5 sm:text-sm md:text-lg lg:space-y-2">
+                    {procedureList}
+                </ol>
             </div>
             <Link
                 href="/"

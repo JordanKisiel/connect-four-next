@@ -32,17 +32,20 @@ export default function Room({ roomID, isSlot1Filled, isSlot2Filled }: Props) {
                 px-6 
                 pb-6 
                 pt-3 
-                shadow-2xl 
+                shadow-2xl
+                lg:px-4
+                lg:pb-4
+                lg:pt-2
                 "
         >
-            <h2 className="mb-3 text-2xl font-bold uppercase sm:text-xl">{`Room ${roomID}`}</h2>
-            <div className="flex w-full justify-between gap-6 lg:justify-around lg:gap-12">
+            <h2 className="mb-3 text-2xl font-bold uppercase sm:text-xl lg:mb-2">{`Room ${roomID}`}</h2>
+            <div className="flex w-full justify-between gap-6 lg:justify-around lg:gap-8">
                 <MenuButton
                     bgColor={isSlot1Filled ? "bg-neutral-300" : "bg-red-300"}
                     textColor={
                         isSlot1Filled ? "text-neutral-600" : "text-neutral-100"
                     }
-                    textSize="sm:text-lg md:text-2xl"
+                    textSize="sm:text-sm md:text-2xl lg:text-lg"
                     textAlign="text-center"
                     padding="p-3"
                     handler={
@@ -60,7 +63,7 @@ export default function Room({ roomID, isSlot1Filled, isSlot2Filled }: Props) {
                     textColor={
                         isSlot2Filled ? "text-neutral-600" : "text-neutral-900"
                     }
-                    textSize="sm:text-lg md:text-2xl"
+                    textSize="sm:text-sm md:text-2xl lg:text-lg"
                     textAlign="text-center"
                     padding="p-3"
                     handler={

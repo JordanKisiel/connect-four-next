@@ -53,7 +53,7 @@ export default function Home() {
     }, [])
 
     return (
-        <div className="mt-[-5rem] flex w-full flex-col items-center">
+        <div className="mt-[-5rem] flex w-full flex-col items-center md:max-w-[30rem]">
             <Image
                 className="mb-16 md:mb-20"
                 src={logo}
@@ -64,7 +64,7 @@ export default function Home() {
                     bgColor="bg-red-300"
                     textColor="text-neutral-100"
                     textAlign="text-left"
-                    bgImage="bg-[url(../public/player-vs-cpu.svg)]"
+                    bgImage="md:bg-[url(../public/player-vs-cpu.svg)]"
                     path="/vs-computer/select-difficulty"
                 >
                     Play vs CPU
@@ -73,7 +73,7 @@ export default function Home() {
                     bgColor="bg-yellow-300"
                     textColor="text-neutral-900"
                     textAlign="text-left"
-                    bgImage="bg-[url(../public/player-vs-player.svg)]"
+                    bgImage="md:bg-[url(../public/player-vs-player.svg)]"
                     path="/vs-player/lobby"
                 >
                     Player vs Player

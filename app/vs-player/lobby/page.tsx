@@ -39,13 +39,13 @@ export default function Lobby() {
     }, [])
 
     return (
-        <div className="mx-auto flex w-[95%] flex-col items-center justify-center md:w-[75%] lg:w-[80%]">
+        <div className="mx-auto flex w-[95%] flex-col items-center justify-center md:w-[75%] lg:max-w-[30rem]">
             <Image
-                className="mb-8 mt-4 sm:hidden md:block"
+                className="mb-8 mt-4 sm:hidden md:block lg:mb-0 lg:scale-75"
                 src={logo}
                 alt="logo"
             />
-            <h2 className="mb-10 text-center text-3xl font-bold uppercase  text-neutral-100 sm:my-3 sm:text-2xl">
+            <h2 className="mb-10 text-center text-3xl font-bold uppercase  text-neutral-100 sm:my-3 sm:text-2xl md:my-8 md:text-3xl lg:my-4 lg:text-2xl">
                 Select Room
             </h2>
             <div className="w-full space-y-6">{rooms}</div>

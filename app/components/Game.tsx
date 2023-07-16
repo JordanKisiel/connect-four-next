@@ -211,7 +211,8 @@ export default function Game({ difficulty }: Props) {
 
     return (
         <div
-            className={`relative
+            className={`
+                relative
                 flex
                 h-full 
                 flex-col 
@@ -223,18 +224,17 @@ export default function Game({ difficulty }: Props) {
                     isPlayer1Turn
                 )}
                 mx-auto
-                w-[95%] 
+                w-[100%] 
                 bg-[length:100%_30%]
                 bg-bottom
                 bg-no-repeat
-                sm:max-w-[27rem]
                 md:w-[90%]
                 md:bg-[length:100%_40%]
                 lg:max-w-[34rem]
                 lg:bg-[length:100%_35%]
                 `}
         >
-            <div className="relative mb-24 flex w-full items-center justify-between md:mb-24">
+            <div className="relative mb-24 flex w-full items-center justify-between md:mb-36 lg:mb-24">
                 <Link href="/">
                     <Button
                         bgColor="bg-purple-500"
@@ -245,7 +245,7 @@ export default function Game({ difficulty }: Props) {
                     </Button>
                 </Link>
                 <Image
-                    className="absolute left-1/2 -translate-x-1/2"
+                    className="absolute left-1/2 -translate-x-1/2 sm:scale-50 md:scale-100"
                     src={logo}
                     alt="logo"
                 />
@@ -270,7 +270,7 @@ export default function Game({ difficulty }: Props) {
             <div className="w-full flex-col items-center md:w-[90%] lg:w-[80%]">
                 {!isGameOver && (
                     <>
-                        <div className="mb-12 flex w-full items-center justify-between sm:mb-9 md:mb-8 lg:mb-6">
+                        <div className="mb-12 flex w-full items-center justify-between sm:mb-9 sm:scale-[0.9] md:mb-8 md:scale-100 lg:mb-6">
                             <ColumnSelectButton
                                 isPlayer1Turn={isPlayer1Turn}
                                 isLeft={true}
