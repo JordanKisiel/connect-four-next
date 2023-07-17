@@ -9,12 +9,14 @@ import {
     getEmptyBoard,
     isBoardEmpty,
 } from "@/lib/connect4-utilities"
+import { socket } from "@/lib/socket"
 import logo from "@/public/logo.svg"
 import Button from "./Button"
 import MenuButton from "./MenuButton"
 import Board from "./Board"
 import ColumnSelectButton from "./ColumnSelectButton"
 import ResultDisplay from "./ResultDisplay"
+import Modal from "./Modal"
 
 export default function Game() {
     //specifies dimensions of board
@@ -34,6 +36,13 @@ export default function Game() {
         return getEmptyBoard(BOARD_ROWS, BOARD_COLS)
     })
 
+    //the two player slots
+    //initialized to false to indicate slots not being filled
+    const [playerSlots, setPlayers] = useState({
+        playerSlot1: false,
+        playerSlot2: false,
+    })
+
     //this represents the index of the selected column on the board
     const [selectedCol, setSelectedCol] = useState(CENTER_COL)
 
@@ -50,22 +59,8 @@ export default function Game() {
     const [isGameOver, setIsGameOver] = useState(false)
 
     useEffect(() => {
-        //detect win by trying to get winning slots array
-        //if array is empty then no win, otherwise there's a win
-        const isWin = getWinningSpaces(board).length !== 0
-
-        //if there is a win or draw, the game is over
-        if (isWin || isBoardFull(board)) {
-            setIsGameOver(true)
-        }
-        //otherwise game continues so change player turn
-        else {
-            //don't change turns if board is empty as no moves have been made to change the turn
-            if (!isBoardEmpty(board)) {
-                setIsPlayer1Turn((prevValue) => !prevValue)
-            }
-        }
-    }, [board])
+        socket.emit("player_joined")
+    }, [])
 
     //handles the change of column by incrementing or decrementing the index
     //also prevents index from moving out of bounds
@@ -245,6 +240,27 @@ export default function Game() {
                     </>
                 )}
             </div>
+
+            {(!playerSlots.playerSlot1 || !playerSlots.playerSlot2) && (
+                <Modal title="Waiting for other player...">
+                    <MenuButton
+                        handler={() => {}}
+                        bgColor="bg-neutral-100"
+                        textColor="text-neutral-900"
+                        textAlign="text-center"
+                    >
+                        Text
+                    </MenuButton>
+                    <MenuButton
+                        handler={() => {}}
+                        bgColor="bg-red-300"
+                        textColor="text-neutral-100"
+                        textAlign="text-center"
+                    >
+                        Text
+                    </MenuButton>
+                </Modal>
+            )}
 
             {isGameOver && (
                 <ResultDisplay

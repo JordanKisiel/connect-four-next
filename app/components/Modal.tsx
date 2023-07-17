@@ -2,9 +2,10 @@ import MenuButton from "./MenuButton"
 
 type Props = {
     title: string
+    children: React.ReactNode
 }
 
-export default function Modal(props: Props) {
+export default function Modal({ title, children }: Props) {
     return (
         <div
             className="
@@ -29,24 +30,9 @@ export default function Modal(props: Props) {
             "
         >
             <span className="text-center text-base font-bold uppercase md:text-2xl">
-                {props.title}
+                {title}
             </span>
-            <MenuButton
-                handler={() => {}}
-                bgColor="bg-neutral-100"
-                textColor="text-neutral-900"
-                textAlign="text-center"
-            >
-                Text
-            </MenuButton>
-            <MenuButton
-                handler={() => {}}
-                bgColor="bg-red-300"
-                textColor="text-neutral-100"
-                textAlign="text-center"
-            >
-                Text
-            </MenuButton>
+            {children}
         </div>
     )
 }

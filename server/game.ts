@@ -10,17 +10,17 @@ const BOARD_COLS = 7
 const CENTER_COL = 3
 
 export class Game {
-    player1: string
-    player2: string
+    playerSlot1: string
+    playerSlot2: string
     board: Board
     selectedCol: number
     isPlayer1Turn: boolean
     isPlayer1First: boolean
     isGameOver: boolean
 
-    constructor(player1: string, player2: string) {
-        this.player1 = player1
-        this.player2 = player2
+    constructor() {
+        this.playerSlot1 = ""
+        this.playerSlot2 = ""
 
         this.board = getEmptyBoard(BOARD_ROWS, BOARD_COLS)
         this.selectedCol = CENTER_COL
@@ -89,5 +89,15 @@ export class Game {
         this.isPlayer1Turn = this.isPlayer1First
 
         this.isGameOver = false
+    }
+
+    addPlayer(playerID: string, playerSlot: "player1" | "player2") {
+        if (playerSlot === "player1") {
+            this.playerSlot1 = playerID
+        } else if (playerSlot === "player2") {
+            this.playerSlot2 = playerID
+        } else {
+            throw new Error("invalid player slot")
+        }
     }
 }

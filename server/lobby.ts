@@ -1,3 +1,4 @@
+import { Game } from "./game.ts"
 import { Server, Socket } from "socket.io"
 
 type SessionSocket = Socket & { sessionID: string }
@@ -5,10 +6,7 @@ type SessionSocket = Socket & { sessionID: string }
 export class Lobby {
     numRooms: number
     server: Server
-    rooms: {
-        playerSlot1: string
-        playerSlot2: string
-    }[]
+    rooms: Game[]
 
     constructor(numRooms: number, server: Server) {
         this.numRooms = numRooms
@@ -17,10 +15,7 @@ export class Lobby {
         const roomsArray = Array(numRooms).fill("")
 
         this.rooms = roomsArray.map((room) => {
-            return {
-                playerSlot1: "",
-                playerSlot2: "",
-            }
+            return new Game()
         })
     }
 
@@ -87,7 +82,6 @@ export class Lobby {
     //empty out that slot
     fillPlayerSlot(roomID: number, playerSlot: string, playerID: string) {
         const currentLocation = this.findPlayer(playerID)
-        console.log(currentLocation)
 
         if (playerSlot === "player1") {
             //subtract 1 from roomID because frontend starts counting from 1
@@ -127,6 +121,7 @@ export class Lobby {
     }
 
     update() {
+        console.log("update got executed")
         this.server.to("lobby").emit("lobby_updated", this.rooms)
         console.log(this.rooms)
     }
