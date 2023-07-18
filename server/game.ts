@@ -4,23 +4,31 @@ import {
     isBoardFull,
 } from "../lib/connect4-utilities.ts"
 import { Board } from "../types.ts"
+import { Server, Socket } from "socket.io"
+
+type SessionSocket = Socket & { sessionID: string }
 
 const BOARD_ROWS = 6
 const BOARD_COLS = 7
 const CENTER_COL = 3
 
 export class Game {
-    playerSlot1: string
-    playerSlot2: string
+    roomID: string
+    server: Server
+    player1: SessionSocket | null
+    player2: SessionSocket | null
     board: Board
     selectedCol: number
     isPlayer1Turn: boolean
     isPlayer1First: boolean
     isGameOver: boolean
 
-    constructor() {
-        this.playerSlot1 = ""
-        this.playerSlot2 = ""
+    constructor(roomID: string, server: Server) {
+        this.roomID = roomID
+        this.server = server
+
+        this.player1 = null
+        this.player2 = null
 
         this.board = getEmptyBoard(BOARD_ROWS, BOARD_COLS)
         this.selectedCol = CENTER_COL
@@ -91,13 +99,35 @@ export class Game {
         this.isGameOver = false
     }
 
-    addPlayer(playerID: string, playerSlot: "player1" | "player2") {
-        if (playerSlot === "player1") {
-            this.playerSlot1 = playerID
-        } else if (playerSlot === "player2") {
-            this.playerSlot2 = playerID
+    addPlayer(player: SessionSocket, isPlayer1: boolean) {
+        //playerSlot of true denotes player1 slot
+        if (isPlayer1) {
+            this.player1 = player
+            this.player1.join(this.roomID)
         } else {
-            throw new Error("invalid player slot")
+            this.player2 = player
+            this.player2.join(this.roomID)
         }
+
+        this.updatePlayers()
+    }
+
+    removePlayer(player: SessionSocket) {
+        if (this.player1?.sessionID === player.sessionID) {
+            this.player1 = null
+        }
+        if (this.player2?.sessionID === player.sessionID) {
+            this.player2 = null
+        }
+
+        this.updatePlayers()
+    }
+
+    updatePlayers() {
+        //inform the clients of the change in players
+        this.server.to(this.roomID).emit("players_updated", {
+            playerSlot1: this.player1?.sessionID,
+            playerSlot2: this.player2?.sessionID,
+        })
     }
 }

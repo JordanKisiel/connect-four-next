@@ -36,15 +36,18 @@ export default function Game() {
         return getEmptyBoard(BOARD_ROWS, BOARD_COLS)
     })
 
-    //the two player slots
-    //initialized to false to indicate slots not being filled
-    const [playerSlots, setPlayers] = useState({
-        playerSlot1: false,
-        playerSlot2: false,
-    })
-
     //this represents the index of the selected column on the board
     const [selectedCol, setSelectedCol] = useState(CENTER_COL)
+
+    //indicates role of player in this instance of the client
+    //initialized to true but may change depending on data from server
+    const [isPlayer1, setIsPlayer1] = useState(true)
+
+    //holds the playerIDs
+    const [playerSlots, setPlayerSlots] = useState({
+        playerSlot1: "",
+        playerSlot2: "",
+    })
 
     //keeps track of whose turn it is
     const [isPlayer1Turn, setIsPlayer1Turn] = useState(true)
@@ -59,6 +62,30 @@ export default function Game() {
     const [isGameOver, setIsGameOver] = useState(false)
 
     useEffect(() => {
+        socket.on("players_updated", (data) => {
+            const room = data
+
+            //update player slots and set player1
+            setPlayerSlots((prevSlots) => {
+                if (
+                    prevSlots.playerSlot1 === "" &&
+                    prevSlots.playerSlot2 === ""
+                ) {
+                    if (room.playerSlot1 !== "") {
+                        setIsPlayer1(true)
+                    } else {
+                        setIsPlayer1(false)
+                    }
+                } else if (prevSlots.playerSlot1 === "") {
+                    setIsPlayer1(true)
+                } else {
+                    setIsPlayer1(false)
+                }
+
+                return room
+            })
+        })
+
         socket.emit("player_joined")
     }, [])
 
@@ -112,6 +139,10 @@ export default function Game() {
 
         //reset game over state
         setIsGameOver(false)
+    }
+
+    function handlePlayerLeft() {
+        socket.emit("player_left")
     }
 
     function getBGToUse(isWinner: boolean, isPlayer1Turn: boolean): string {
@@ -241,23 +272,17 @@ export default function Game() {
                 )}
             </div>
 
-            {(!playerSlots.playerSlot1 || !playerSlots.playerSlot2) && (
+            {(playerSlots.playerSlot1 === "" ||
+                playerSlots.playerSlot2 === "") && (
                 <Modal title="Waiting for other player...">
                     <MenuButton
-                        handler={() => {}}
+                        handler={() => handlePlayerLeft}
                         bgColor="bg-neutral-100"
                         textColor="text-neutral-900"
                         textAlign="text-center"
+                        path="/vs-player/lobby"
                     >
-                        Text
-                    </MenuButton>
-                    <MenuButton
-                        handler={() => {}}
-                        bgColor="bg-red-300"
-                        textColor="text-neutral-100"
-                        textAlign="text-center"
-                    >
-                        Text
+                        Back to Lobby
                     </MenuButton>
                 </Modal>
             )}

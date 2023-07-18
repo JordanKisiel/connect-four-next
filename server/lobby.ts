@@ -6,17 +6,21 @@ type SessionSocket = Socket & { sessionID: string }
 export class Lobby {
     numRooms: number
     server: Server
-    rooms: Game[]
+    games: Game[]
 
     constructor(numRooms: number, server: Server) {
         this.numRooms = numRooms
         this.server = server
+        this.games = []
 
-        const roomsArray = Array(numRooms).fill("")
-
-        this.rooms = roomsArray.map((room) => {
-            return new Game()
-        })
+        //create one more game so that games can referenced from index 1
+        //this makes it easier to interface with the frontend
+        //which is also indexed from 1
+        for (let i = 1; i < numRooms + 1; i += 1) {
+            const roomID = `Room ${i}`
+            const game = new Game(roomID, server)
+            this.games.push(game)
+        }
     }
 
     //adds a new connection to the lobby for managment
@@ -26,103 +30,51 @@ export class Lobby {
         //register lobby events
         socket.on("start_lobby", () => {
             socket.join("lobby")
-            this.update()
+            this.updateLobby()
         })
 
         socket.on("leave_lobby", () => {
-            this.removePlayer(socket.sessionID)
             socket.leave("lobby")
         })
 
         //whenever a client selects a player slot on the client
         //the server updates the lobby state and sends it back to the client
-        socket.on("select_slot", (data) => {
-            //remove player from current room if they're in one
-            const { roomID, playerSlot } = this.findPlayer(socket.sessionID)
-            if (roomID !== "" && playerSlot !== "") {
-                socket.leave(`Room ${Number(roomID) + 1}`)
+        socket.on("select_slot", ({ roomID, playerSlot }) => {
+            //when slot is selected, a user should be added to the corresponding game
+            //and removed from any other game
+
+            //remove player from any other games
+            const otherGames = this.games.filter((game) => {
+                return game.roomID !== roomID
+            })
+
+            for (let game of otherGames) {
+                game.removePlayer(socket)
             }
 
-            this.fillPlayerSlot(data.roomID, data.playerSlot, socket.sessionID)
-            socket.join(`Room ${data.roomID}`)
+            //add player to selected game and slot
+            const selectedGame = this.games.filter((game) => {
+                return game.roomID === roomID
+            })
+
+            const isPlayer1 = playerSlot === "player1"
+            selectedGame[0].addPlayer(socket, isPlayer1)
+
+            this.updateLobby()
         })
     }
 
-    //look for playerID in lobby and returns
-    //roomID & playerSlot
-    //if playerID not found, roomID & playerSlot will return
-    //with empty string values
-    findPlayer(playerID: string): {
-        roomID: string
-        playerSlot: "playerSlot1" | "playerSlot2" | ""
-    } {
-        for (let [index, room] of this.rooms.entries()) {
-            if (room.playerSlot1 === playerID) {
-                return {
-                    roomID: String(index),
-                    playerSlot: "playerSlot1",
-                }
-            }
-            if (room.playerSlot2 === playerID) {
-                return {
-                    roomID: String(index),
-                    playerSlot: "playerSlot2",
-                }
-            }
+    updateLobby() {
+        const lobby = []
+
+        for (let game of this.games) {
+            lobby.push({
+                player1Slot: game.player1,
+                player2Slot: game.player2,
+            })
         }
 
-        return {
-            roomID: "",
-            playerSlot: "",
-        }
-    }
-
-    //fills selected slot with playerID
-    //if playerID was already present in a slot
-    //empty out that slot
-    fillPlayerSlot(roomID: number, playerSlot: string, playerID: string) {
-        const currentLocation = this.findPlayer(playerID)
-
-        if (playerSlot === "player1") {
-            //subtract 1 from roomID because frontend starts counting from 1
-            this.rooms[roomID - 1].playerSlot1 = playerID
-        } else if (playerSlot === "player2") {
-            this.rooms[roomID - 1].playerSlot2 = playerID
-        } else {
-            throw Error("invalid player slot")
-        }
-
-        if (
-            currentLocation.roomID !== "" &&
-            currentLocation.playerSlot !== ""
-        ) {
-            console.log(`emptying player slot for user: ${playerID}`)
-            this.rooms[Number(currentLocation.roomID)][
-                currentLocation.playerSlot
-            ] = ""
-        }
-
-        this.update()
-
-        console.log(this.rooms)
-    }
-
-    removePlayer(playerID: string) {
-        for (let [index, room] of this.rooms.entries()) {
-            if (room.playerSlot1 === playerID) {
-                this.rooms[index].playerSlot1 = ""
-            }
-            if (room.playerSlot2 === playerID) {
-                this.rooms[index].playerSlot2 = ""
-            }
-        }
-
-        this.update()
-    }
-
-    update() {
-        console.log("update got executed")
-        this.server.to("lobby").emit("lobby_updated", this.rooms)
-        console.log(this.rooms)
+        this.server.to("lobby").emit("lobby_updated", lobby)
+        console.log(lobby)
     }
 }

@@ -17,7 +17,7 @@ export default function Lobby() {
         return (
             <Room
                 key={index}
-                roomID={index + 1} //don't want to start from room 0
+                roomID={index} //roomID is indexed from 1 on the server side
                 isSlot1Filled={lobby[index].playerSlot1 !== ""}
                 isSlot2Filled={lobby[index].playerSlot2 !== ""}
             />
