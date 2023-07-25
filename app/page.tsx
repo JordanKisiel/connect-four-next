@@ -5,20 +5,23 @@ import Image from "next/image"
 import logo from "../public/logo.svg"
 import MenuButton from "./components/MenuButton"
 import { socket } from "@/lib/socket"
+import { v4 as uuidv4 } from "uuid"
 
-type SessionData = {
-    sessionID: string
-}
+const CLIENT_ID_KEY = "connect-four-next-id"
 
 export default function Home() {
     useEffect(() => {
-        //get the session id if it exists
-        const sessionID = localStorage.getItem("sessionID")
+        //get client id or generate it for the first time
+        let id = localStorage.getItem(CLIENT_ID_KEY)
 
-        if (sessionID) {
-            socket.auth = { sessionID }
-            socket.connect()
+        if (id === null) {
+            localStorage.setItem(CLIENT_ID_KEY, uuidv4())
+            id = localStorage.getItem(CLIENT_ID_KEY)
         }
+
+        //provide id to socket auth property so it can
+        //be accessed in handshake
+        socket.auth = { id }
 
         function onConnect() {
             console.log("user connected")
@@ -28,18 +31,8 @@ export default function Home() {
             console.log("user disconnected")
         }
 
-        function onSession(data: SessionData) {
-            console.log("session established")
-            const { sessionID } = data
-            //attach the session ID to the next reconnection attempts
-            socket.auth = { sessionID }
-            //store it in local storage
-            localStorage.setItem("sessionID", sessionID)
-        }
-
         socket.on("connect", onConnect)
         socket.on("disconnect", onDisconnect)
-        socket.on("session", ({ sessionID }) => {})
 
         socket.connect()
         //used when user nagivates back to home page from the lobby page
@@ -48,7 +41,6 @@ export default function Home() {
         return () => {
             socket.off("connect", onConnect)
             socket.off("disconnect", onDisconnect)
-            socket.off("session", onSession)
         }
     }, [])
 

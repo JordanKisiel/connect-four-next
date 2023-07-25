@@ -6,8 +6,6 @@ import {
 import { Board } from "../types.ts"
 import { Server, Socket } from "socket.io"
 
-type SessionSocket = Socket & { sessionID: string }
-
 const BOARD_ROWS = 6
 const BOARD_COLS = 7
 const CENTER_COL = 3
@@ -15,8 +13,10 @@ const CENTER_COL = 3
 export class Game {
     roomID: string
     server: Server
-    player1: SessionSocket | null
-    player2: SessionSocket | null
+    player1: Socket | null
+    player2: Socket | null
+    player1Id: string
+    player2Id: string
     board: Board
     selectedCol: number
     isPlayer1Turn: boolean
@@ -29,6 +29,8 @@ export class Game {
 
         this.player1 = null
         this.player2 = null
+        this.player1Id = ""
+        this.player2Id = ""
 
         this.board = getEmptyBoard(BOARD_ROWS, BOARD_COLS)
         this.selectedCol = CENTER_COL
@@ -99,35 +101,40 @@ export class Game {
         this.isGameOver = false
     }
 
-    addPlayer(player: SessionSocket, isPlayer1: boolean) {
+    addPlayer(player: Socket, isPlayer1: boolean) {
         //playerSlot of true denotes player1 slot
         if (isPlayer1) {
             this.player1 = player
             this.player1.join(this.roomID)
+            this.player1Id = player.handshake.auth.id
         } else {
             this.player2 = player
             this.player2.join(this.roomID)
+            this.player2Id = player.handshake.auth.id
         }
 
         this.updatePlayers()
     }
 
-    removePlayer(player: SessionSocket) {
-        if (this.player1?.sessionID === player.sessionID) {
+    removePlayer(playerId: string) {
+        if (this.player1Id === playerId) {
+            this.player1?.leave(this.roomID)
             this.player1 = null
+            this.player1Id = ""
         }
-        if (this.player2?.sessionID === player.sessionID) {
+        if (this.player2Id === playerId) {
+            this.player2?.leave(this.roomID)
             this.player2 = null
+            this.player2Id = ""
         }
-
         this.updatePlayers()
     }
 
+    //inform the clients of the change in players
     updatePlayers() {
-        //inform the clients of the change in players
         this.server.to(this.roomID).emit("players_updated", {
-            playerSlot1: this.player1?.sessionID,
-            playerSlot2: this.player2?.sessionID,
+            playerSlot1: this.player1Id,
+            playerSlot2: this.player2Id,
         })
     }
 }

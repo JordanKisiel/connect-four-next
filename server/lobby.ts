@@ -1,8 +1,6 @@
 import { Game } from "./game.ts"
 import { Server, Socket } from "socket.io"
 
-type SessionSocket = Socket & { sessionID: string }
-
 export class Lobby {
     numRooms: number
     server: Server
@@ -16,17 +14,21 @@ export class Lobby {
         //create one more game so that games can referenced from index 1
         //this makes it easier to interface with the frontend
         //which is also indexed from 1
+        //TODO: consider making the zero index a game that's just not used by the frontend
+        //      this would avoid certain issues with undefined references in other parts of the code
         for (let i = 1; i < numRooms + 1; i += 1) {
             const roomID = `Room ${i}`
             const game = new Game(roomID, server)
-            this.games.push(game)
+            this.games[i] = game
         }
     }
 
     //adds a new connection to the lobby for managment
     //note: being in the lobby doesn't mean that the user
     //has selected a player slot
-    addUser(socket: SessionSocket) {
+    addUser(socket: Socket) {
+        const clientID = socket.handshake.auth.id
+
         //register lobby events
         socket.on("start_lobby", () => {
             socket.join("lobby")
@@ -40,25 +42,21 @@ export class Lobby {
         //whenever a client selects a player slot on the client
         //the server updates the lobby state and sends it back to the client
         socket.on("select_slot", ({ roomID, playerSlot }) => {
-            //when slot is selected, a user should be added to the corresponding game
-            //and removed from any other game
+            //when slot is selected, a user should be added to the corresponding game slot
+            //and removed from any other game slots
 
-            //remove player from any other games
-            const otherGames = this.games.filter((game) => {
-                return game.roomID !== roomID
-            })
-
-            for (let game of otherGames) {
-                game.removePlayer(socket)
+            //remove player from all games (which removes them from slots as well)
+            for (let i = 1; i < this.games.length; i += 1) {
+                this.games[i].removePlayer(clientID)
             }
 
             //add player to selected game and slot
             const selectedGame = this.games.filter((game) => {
                 return game.roomID === roomID
-            })
+            })[0]
 
             const isPlayer1 = playerSlot === "player1"
-            selectedGame[0].addPlayer(socket, isPlayer1)
+            selectedGame.addPlayer(socket, isPlayer1)
 
             this.updateLobby()
         })
@@ -67,14 +65,15 @@ export class Lobby {
     updateLobby() {
         const lobby = []
 
-        for (let game of this.games) {
-            lobby.push({
-                player1Slot: game.player1,
-                player2Slot: game.player2,
-            })
+        //pull data from games and send it to clients
+        for (let i = 1; i < this.games.length; i += 1) {
+            lobby[i] = {
+                playerSlot1: this.games[i].player1Id,
+                playerSlot2: this.games[i].player2Id,
+            }
         }
 
-        this.server.to("lobby").emit("lobby_updated", lobby)
         console.log(lobby)
+        this.server.to("lobby").emit("lobby_updated", lobby)
     }
 }

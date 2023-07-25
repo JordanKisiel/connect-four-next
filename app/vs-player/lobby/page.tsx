@@ -14,14 +14,17 @@ export default function Lobby() {
 
     const roomsArray = Array(lobby.length).fill("")
     const rooms = roomsArray.map((room, index) => {
-        return (
-            <Room
-                key={index}
-                roomID={index} //roomID is indexed from 1 on the server side
-                isSlot1Filled={lobby[index].playerSlot1 !== ""}
-                isSlot2Filled={lobby[index].playerSlot2 !== ""}
-            />
-        )
+        if (index > 0) {
+            //roomID is indexed from 1 on the server side
+            return (
+                <Room
+                    key={index}
+                    roomID={`Room ${index}`}
+                    isSlot1Filled={lobby[index].playerSlot1 !== ""}
+                    isSlot2Filled={lobby[index].playerSlot2 !== ""}
+                />
+            )
+        }
     })
 
     useEffect(() => {
