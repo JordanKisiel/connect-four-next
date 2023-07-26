@@ -18,7 +18,7 @@ export class Lobby {
         //      this would avoid certain issues with undefined references in other parts of the code
         for (let i = 1; i < numRooms + 1; i += 1) {
             const roomID = `Room ${i}`
-            const game = new Game(roomID, server)
+            const game = new Game(roomID, this.server)
             this.games[i] = game
         }
     }
@@ -42,8 +42,6 @@ export class Lobby {
         //whenever a client selects a player slot on the client
         //the server updates the lobby state and sends it back to the client
         socket.on("select_slot", ({ roomID, playerSlot }) => {
-            //when slot is selected, a user should be added to the corresponding game slot
-            //and removed from any other game slots
 
             //remove player from all games (which removes them from slots as well)
             for (let i = 1; i < this.games.length; i += 1) {

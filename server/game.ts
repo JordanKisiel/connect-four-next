@@ -21,7 +21,7 @@ export class Game {
     selectedCol: number
     isPlayer1Turn: boolean
     isPlayer1First: boolean
-    isGameOver: boolean
+    stage: "waiting" | "in_progress" | "over"
 
     constructor(roomID: string, server: Server) {
         this.roomID = roomID
@@ -39,7 +39,7 @@ export class Game {
         //who goes first alternates with each game
         this.isPlayer1First = true
 
-        this.isGameOver = false
+        this.stage = "waiting"
     }
 
     //increment or decrement selectedCol index
@@ -79,7 +79,7 @@ export class Game {
         const isWin = getWinningSpaces(this.board).length !== 0
         //if there is a win or draw, the game is over
         if (isWin || isBoardFull(this.board)) {
-            this.isGameOver = true
+            this.stage = "over"
         } else {
             //otherwise play continues so change player turn
             this.isPlayer1Turn = !this.isPlayer1Turn
@@ -87,6 +87,8 @@ export class Game {
 
         //reset selected col to center col after move
         this.selectedCol = CENTER_COL
+
+        this.updateGame()
     }
 
     //sets up a new game if the players choose to play again
@@ -98,22 +100,43 @@ export class Game {
         this.isPlayer1First = !this.isPlayer1First
         this.isPlayer1Turn = this.isPlayer1First
 
-        this.isGameOver = false
+        this.stage = "in_progress"
     }
 
     addPlayer(player: Socket, isPlayer1: boolean) {
+        console.log(`${player.handshake.auth.id} joining game`)
+        player.join(this.roomID)
+
+        player.on("player_joined", () => {
+            console.log("player joined -- updating game")
+            this.updateGame()
+        })
+
+        player.on("disc_dropped", ({ selectedCol, isPlayer1 }) => {
+            console.log("dropping disc")
+            this.dropDisc(selectedCol, isPlayer1)
+        })
+
         //playerSlot of true denotes player1 slot
         if (isPlayer1) {
             this.player1 = player
-            this.player1.join(this.roomID)
             this.player1Id = player.handshake.auth.id
         } else {
             this.player2 = player
-            this.player2.join(this.roomID)
             this.player2Id = player.handshake.auth.id
         }
 
-        this.updatePlayers()
+        if (this.player1Id !== "" && this.player2Id !== "") {
+            this.stage = "in_progress"
+        }
+
+        console.log(
+            `${player.handshake.auth.id} rooms are ${[...player.rooms].join(
+                ", "
+            )}`
+        )
+
+        this.updateGame()
     }
 
     removePlayer(playerId: string) {
@@ -127,14 +150,19 @@ export class Game {
             this.player2 = null
             this.player2Id = ""
         }
-        this.updatePlayers()
+        this.updateGame()
     }
 
     //inform the clients of the change in players
-    updatePlayers() {
-        this.server.to(this.roomID).emit("players_updated", {
+    updateGame() {
+        this.server.to(this.roomID).emit("game_updated", {
             playerSlot1: this.player1Id,
             playerSlot2: this.player2Id,
+            board: this.board,
+            selectedCol: this.selectedCol,
+            isPlayer1Turn: this.isPlayer1Turn,
+            isPlayer1First: this.isPlayer1First,
+            stage: this.stage,
         })
     }
 }

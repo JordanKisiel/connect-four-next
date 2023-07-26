@@ -30,7 +30,6 @@ export default function Lobby() {
     useEffect(() => {
         socket.on("lobby_updated", (data) => {
             const lobby = data
-            console.log(lobby)
             setLobby(lobby)
         })
 

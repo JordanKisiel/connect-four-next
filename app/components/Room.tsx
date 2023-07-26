@@ -41,10 +41,10 @@ export default function Room({ roomID, isSlot1Filled, isSlot2Filled }: Props) {
         >
             <h2 className="mb-3 text-2xl font-bold uppercase sm:text-xl lg:mb-2">{`Room ${roomID}`}</h2>
             <div className="flex w-full justify-between gap-6 lg:justify-around lg:gap-8">
-                {/* <Link
+                <Link
                     className="w-full"
                     href="/vs-player/game"
-                > */}
+                >
                 <MenuButton
                     bgColor={isSlot1Filled ? "bg-neutral-300" : "bg-red-300"}
                     textColor={
@@ -63,11 +63,11 @@ export default function Room({ roomID, isSlot1Filled, isSlot2Filled }: Props) {
                 >
                     {isSlot1Filled ? "Filled" : "Player 1"}
                 </MenuButton>
-                {/* </Link> */}
-                {/* <Link
+                </Link>
+                <Link
                     className="w-full"
                     href="/vs-player/game"
-                > */}
+                >
                 <MenuButton
                     bgColor={isSlot2Filled ? "bg-neutral-300" : "bg-yellow-300"}
                     textColor={
@@ -86,7 +86,7 @@ export default function Room({ roomID, isSlot1Filled, isSlot2Filled }: Props) {
                 >
                     {isSlot2Filled ? "Filled" : "Player 2"}
                 </MenuButton>
-                {/* </Link> */}
+                </Link>
             </div>
         </div>
     )

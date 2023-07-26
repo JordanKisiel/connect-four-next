@@ -9,6 +9,7 @@ import {
     getEmptyBoard,
     isBoardEmpty,
 } from "@/lib/connect4-utilities"
+import { getClientID } from "@/lib/clientID"
 import { socket } from "@/lib/socket"
 import logo from "@/public/logo.svg"
 import Button from "./Button"
@@ -17,6 +18,8 @@ import Board from "./Board"
 import ColumnSelectButton from "./ColumnSelectButton"
 import ResultDisplay from "./ResultDisplay"
 import Modal from "./Modal"
+
+type GameStage = "waiting" | "in_progress" | "over"
 
 export default function Game() {
     //specifies dimensions of board
@@ -28,6 +31,9 @@ export default function Game() {
 
     //center colum is at index 3
     const CENTER_COL = 3
+
+    //indication of which stage of the game's lifecycle it's in
+    const [stage, setStage] = useState<GameStage>("waiting")
 
     //board states initializes with null for empty spaces
     //later, spaces filled with true will represent the discs of the first player
@@ -57,33 +63,30 @@ export default function Game() {
     //regardless of who won the last game
     const [isPlayer1First, setIsPlayer1First] = useState(true)
 
-    //keeps track of whether the current game has ended
-    //this could be due to a win or a draw
-    const [isGameOver, setIsGameOver] = useState(false)
+    //compute whether it's the player's turn or not
+    const isPlayersTurn =
+        (isPlayer1Turn && isPlayer1) || (!isPlayer1Turn && !isPlayer1)
 
     useEffect(() => {
-        socket.on("players_updated", (data) => {
-            const room = data
+        const clientID = getClientID()
 
-            //update player slots and set player1
-            setPlayerSlots((prevSlots) => {
-                if (
-                    prevSlots.playerSlot1 === "" &&
-                    prevSlots.playerSlot2 === ""
-                ) {
-                    if (room.playerSlot1 !== "") {
-                        setIsPlayer1(true)
-                    } else {
-                        setIsPlayer1(false)
-                    }
-                } else if (prevSlots.playerSlot1 === "") {
-                    setIsPlayer1(true)
-                } else {
-                    setIsPlayer1(false)
-                }
+        socket.on("game_updated", (data) => {
+            const game = data
 
-                return room
+            setStage(game.stage)
+            setPlayerSlots({
+                playerSlot1: game.playerSlot1,
+                playerSlot2: game.playerSlot2,
             })
+            if (game.playerSlot1 === clientID) {
+                setIsPlayer1(true)
+            } else {
+                setIsPlayer1(false)
+            }
+            setBoard(game.board)
+            setSelectedCol(game.selectedCol)
+            setIsPlayer1Turn(game.isPlayer1Turn)
+            setIsPlayer1First(game.isPlayer1First)
         })
 
         socket.emit("player_joined")
@@ -103,25 +106,10 @@ export default function Game() {
     //true = first player disc
     //false = second player disc
     function handleDrop(selectedColIndex: number, isFirstPlayerDisc: boolean) {
-        //only drop in that column if there's an open slot
-        if (board[selectedColIndex].some((slot) => slot === null)) {
-            setBoard((prevBoard) => {
-                return prevBoard.map((col, index) => {
-                    const isNull = (element: boolean | null) => element === null
-                    const firstNullIndex = col.findIndex(isNull)
-                    return index === selectedColIndex
-                        ? col.map((space, index) => {
-                              return index === firstNullIndex
-                                  ? isFirstPlayerDisc
-                                  : space
-                          })
-                        : col
-                })
-            })
-
-            //reset selected column back to middle after move is made
-            setSelectedCol(CENTER_COL)
-        }
+        socket.emit("disc_dropped", {
+            selectedCol: selectedColIndex,
+            isPlayer1: isFirstPlayerDisc,
+        })
     }
 
     function handleNewGame() {
@@ -136,9 +124,6 @@ export default function Game() {
 
         //reflect the fact that this game started with the opposite player
         setIsPlayer1First((prevValue) => !prevValue)
-
-        //reset game over state
-        setIsGameOver(false)
     }
 
     function handlePlayerLeft() {
@@ -171,7 +156,9 @@ export default function Game() {
                 px-2 
                 pt-16
                 ${getBGToUse(
-                    isGameOver ? getWinningSpaces(board).length !== 0 : false,
+                    stage === "over"
+                        ? getWinningSpaces(board).length !== 0
+                        : false,
                     isPlayer1Turn
                 )}
                 mx-auto
@@ -204,11 +191,11 @@ export default function Game() {
                     alt="logo"
                 />
                 <Button
-                    bgColor="bg-red-300"
-                    textColor="text-neutral-900"
+                    bgColor="bg-purple-500"
+                    textColor="text-neutral-100"
                     paddingX="px-8"
                 >
-                    Forfeit
+                    Leave
                 </Button>
             </div>
 
@@ -217,18 +204,18 @@ export default function Game() {
                 selectedCol={selectedCol}
                 board={board}
                 isPlayer1Turn={isPlayer1Turn}
-                winningSpaces={isGameOver ? getWinningSpaces(board) : []}
+                winningSpaces={stage === "over" ? getWinningSpaces(board) : []}
             />
 
             <div className="w-full flex-col items-center md:w-[90%] lg:w-[80%]">
-                {!isGameOver && (
+                {stage !== "over" && (
                     <>
                         <div className="mb-12 flex w-full items-center justify-between sm:mb-9 md:mb-8 lg:mb-6">
                             <ColumnSelectButton
                                 isPlayer1Turn={isPlayer1Turn}
                                 isLeft={true}
                                 handleColSelect={
-                                    isPlayer1Turn
+                                    isPlayersTurn
                                         ? handleColSelect
                                         : () => {
                                               /* do nothing */
@@ -239,7 +226,7 @@ export default function Game() {
                                 isPlayer1Turn={isPlayer1Turn}
                                 isLeft={false}
                                 handleColSelect={
-                                    isPlayer1Turn
+                                    isPlayersTurn
                                         ? handleColSelect
                                         : () => {
                                               /* do nothing */
@@ -258,9 +245,8 @@ export default function Game() {
                             }
                             textAlign="text-center"
                             handler={
-                                isPlayer1Turn
-                                    ? () =>
-                                          handleDrop(selectedCol, isPlayer1Turn)
+                                isPlayersTurn
+                                    ? () => handleDrop(selectedCol, isPlayer1)
                                     : () => {
                                           /* do nothing */
                                       }
@@ -272,8 +258,7 @@ export default function Game() {
                 )}
             </div>
 
-            {(playerSlots.playerSlot1 === "" ||
-                playerSlots.playerSlot2 === "") && (
+            {stage === "waiting" && (
                 <Modal title="Waiting for other player...">
                     <MenuButton
                         handler={() => handlePlayerLeft}
@@ -287,7 +272,7 @@ export default function Game() {
                 </Modal>
             )}
 
-            {isGameOver && (
+            {stage === "over" && (
                 <ResultDisplay
                     isPlayer1Turn={isPlayer1Turn}
                     isWinner={getWinningSpaces(board).length !== 0}

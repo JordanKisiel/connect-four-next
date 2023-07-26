@@ -5,19 +5,13 @@ import Image from "next/image"
 import logo from "../public/logo.svg"
 import MenuButton from "./components/MenuButton"
 import { socket } from "@/lib/socket"
-import { v4 as uuidv4 } from "uuid"
+import { getClientID } from "@/lib/clientID"
 
-const CLIENT_ID_KEY = "connect-four-next-id"
 
 export default function Home() {
     useEffect(() => {
         //get client id or generate it for the first time
-        let id = localStorage.getItem(CLIENT_ID_KEY)
-
-        if (id === null) {
-            localStorage.setItem(CLIENT_ID_KEY, uuidv4())
-            id = localStorage.getItem(CLIENT_ID_KEY)
-        }
+        const id = getClientID()
 
         //provide id to socket auth property so it can
         //be accessed in handshake
