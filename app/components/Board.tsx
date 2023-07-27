@@ -9,6 +9,7 @@ type Props = {
     selectedCol: number
     board: Board
     isPlayer1Turn: boolean
+    isPlayersTurn: boolean
     winningSpaces: number[][]
 }
 
@@ -17,6 +18,7 @@ export default function Board({
     selectedCol,
     board,
     isPlayer1Turn,
+    isPlayersTurn,
     winningSpaces,
 }: Props) {
     const columnArray = Array(numColumns).fill("")
@@ -29,6 +31,7 @@ export default function Board({
                 selectedCol={selectedCol}
                 board={board}
                 isPlayer1Turn={isPlayer1Turn}
+                isPlayersTurn={isPlayersTurn}
                 winningSpaces={winningSpaces}
             />
         )

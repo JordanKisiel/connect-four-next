@@ -7,6 +7,7 @@ type Props = {
     rowIndex: number
     winningSpaces: number[][]
     isPlayer1Turn: boolean
+    isPlayersTurn: boolean
     selectedCol: number
 }
 
@@ -15,6 +16,7 @@ export default function Column({
     rowIndex,
     winningSpaces,
     isPlayer1Turn,
+    isPlayersTurn,
     selectedCol,
 }: Props) {
     const spaces = board[rowIndex]
@@ -33,11 +35,14 @@ export default function Column({
 
     return (
         <div className="mt-[8%] h-[85%]">
-            <ColumnIndicator
-                isPlayer1Turn={isPlayer1Turn}
-                rowIndex={rowIndex}
-                selectedCol={selectedCol}
-            />
+            {
+                <ColumnIndicator
+                    isPlayer1Turn={isPlayer1Turn}
+                    isPlayersTurn={isPlayersTurn}
+                    rowIndex={rowIndex}
+                    selectedCol={selectedCol}
+                />
+            }
             <div
                 id="SPACES_CONTAINER"
                 className="mt-[30%] grid grid-rows-6"

@@ -42,17 +42,6 @@ export class Game {
         this.stage = "waiting"
     }
 
-    //increment or decrement selectedCol index
-    //based on direction
-    selectNewCol(isMoveToLeft: boolean) {
-        const prevCol = this.selectedCol
-        if (isMoveToLeft) {
-            this.selectedCol = prevCol > 0 ? prevCol - 1 : 0
-        } else {
-            this.selectedCol = prevCol < BOARD_COLS - 1 ? prevCol + 1 : 6
-        }
-    }
-
     //handles player moves and updates board
     dropDisc(colIndex: number, isFirstPlayerDisc: boolean) {
         //only drop in col if there's an open slot
@@ -117,6 +106,8 @@ export class Game {
             this.dropDisc(selectedCol, isPlayer1)
         })
 
+        player.on("player_left", ({ isPlayer1 }) => {})
+
         //playerSlot of true denotes player1 slot
         if (isPlayer1) {
             this.player1 = player
@@ -130,26 +121,22 @@ export class Game {
             this.stage = "in_progress"
         }
 
-        console.log(
-            `${player.handshake.auth.id} rooms are ${[...player.rooms].join(
-                ", "
-            )}`
-        )
-
         this.updateGame()
     }
 
-    removePlayer(playerId: string) {
-        if (this.player1Id === playerId) {
+    removePlayer(isPlayer1: boolean) {
+        if (isPlayer1) {
             this.player1?.leave(this.roomID)
             this.player1 = null
             this.player1Id = ""
-        }
-        if (this.player2Id === playerId) {
+        } else {
             this.player2?.leave(this.roomID)
             this.player2 = null
             this.player2Id = ""
         }
+
+        this.stage = "over"
+
         this.updateGame()
     }
 
@@ -159,7 +146,6 @@ export class Game {
             playerSlot1: this.player1Id,
             playerSlot2: this.player2Id,
             board: this.board,
-            selectedCol: this.selectedCol,
             isPlayer1Turn: this.isPlayer1Turn,
             isPlayer1First: this.isPlayer1First,
             stage: this.stage,

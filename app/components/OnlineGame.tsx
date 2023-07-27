@@ -7,7 +7,6 @@ import {
     getWinningSpaces,
     isBoardFull,
     getEmptyBoard,
-    isBoardEmpty,
 } from "@/lib/connect4-utilities"
 import { getClientID } from "@/lib/clientID"
 import { socket } from "@/lib/socket"
@@ -84,7 +83,6 @@ export default function Game() {
                 setIsPlayer1(false)
             }
             setBoard(game.board)
-            setSelectedCol(game.selectedCol)
             setIsPlayer1Turn(game.isPlayer1Turn)
             setIsPlayer1First(game.isPlayer1First)
         })
@@ -94,40 +92,28 @@ export default function Game() {
 
     //handles the change of column by incrementing or decrementing the index
     //also prevents index from moving out of bounds
+    //handled client side because latency to server might make this annoying
     function handleColSelect(isMoveToLeft: boolean) {
         isMoveToLeft
             ? setSelectedCol((prevCol) => (prevCol > 0 ? prevCol - 1 : 0))
             : setSelectedCol((prevCol) => (prevCol < 6 ? prevCol + 1 : 6))
     }
 
-    //takes selected column as an index
-    //and updates the board state to represent a disc being
-    //dropped in that column
-    //true = first player disc
-    //false = second player disc
     function handleDrop(selectedColIndex: number, isFirstPlayerDisc: boolean) {
         socket.emit("disc_dropped", {
             selectedCol: selectedColIndex,
             isPlayer1: isFirstPlayerDisc,
         })
+
+        setSelectedCol(CENTER_COL)
     }
 
-    function handleNewGame() {
-        //empty board
-        setBoard(Array(7).fill(Array(6).fill(null)))
-
-        //return selected column to middle
-        setSelectedCol(3)
-
-        //player that makes the first move of the new game is the opposite of who made it last game
-        setIsPlayer1Turn(!isPlayer1First)
-
-        //reflect the fact that this game started with the opposite player
-        setIsPlayer1First((prevValue) => !prevValue)
+    function handlePlayerLeft(isPlayer1: boolean) {
+        socket.emit("player_left", { isPlayer1 })
     }
 
-    function handlePlayerLeft() {
-        socket.emit("player_left")
+    function handleStartNewGame() {
+        socket.emit("start_new_game")
     }
 
     function getBGToUse(isWinner: boolean, isPlayer1Turn: boolean): string {
@@ -194,6 +180,7 @@ export default function Game() {
                     bgColor="bg-purple-500"
                     textColor="text-neutral-100"
                     paddingX="px-8"
+                    handler={() => handlePlayerLeft(isPlayer1)}
                 >
                     Leave
                 </Button>
@@ -204,6 +191,7 @@ export default function Game() {
                 selectedCol={selectedCol}
                 board={board}
                 isPlayer1Turn={isPlayer1Turn}
+                isPlayersTurn={isPlayersTurn}
                 winningSpaces={stage === "over" ? getWinningSpaces(board) : []}
             />
 
@@ -277,7 +265,7 @@ export default function Game() {
                     isPlayer1Turn={isPlayer1Turn}
                     isWinner={getWinningSpaces(board).length !== 0}
                     isBoardFull={isBoardFull(board)}
-                    handler={handleNewGame}
+                    handler={handleStartNewGame}
                 />
             )}
         </div>

@@ -7,12 +7,14 @@ type Props = {
     rowIndex: number
     selectedCol: number
     isPlayer1Turn: boolean
+    isPlayersTurn: boolean
 }
 
 export default function ColumnIndicator({
     rowIndex,
     selectedCol,
     isPlayer1Turn,
+    isPlayersTurn,
 }: Props) {
     let imageSrc = invisibleIndicator
     let altText = ""
@@ -29,7 +31,11 @@ export default function ColumnIndicator({
 
     return (
         <div className="z-10 mx-auto -mt-[90%] w-[70%]">
-            <Image className="w-full" src={imageSrc} alt={altText} />
+            <Image
+                className={`w-full ${!isPlayersTurn ? "invisible" : ""}`}
+                src={imageSrc}
+                alt={altText}
+            />
         </div>
     )
 }
