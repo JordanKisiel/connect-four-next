@@ -11,6 +11,7 @@ const BOARD_COLS = 7
 const CENTER_COL = 3
 
 export class Game {
+    timeStamp: number
     roomID: string
     server: Server
     player1: Socket | null
@@ -24,6 +25,9 @@ export class Game {
     stage: "waiting" | "in_progress" | "over"
 
     constructor(roomID: string, server: Server) {
+        //testing with timeStamp
+        this.timeStamp = Date.now()
+
         this.roomID = roomID
         this.server = server
 
@@ -106,7 +110,17 @@ export class Game {
             this.dropDisc(selectedCol, isPlayer1)
         })
 
-        player.on("player_left", ({ isPlayer1 }) => {})
+        player.on("player_left_game", ({ isPlayer1 }) => {
+            this.removePlayer(isPlayer1)
+
+            if (this.player1 !== null || this.player2 != null) {
+                this.stage = "over" //other player wins by default
+            } else {
+                this.stage = "waiting"
+            }
+
+            this.updateGame()
+        })
 
         //playerSlot of true denotes player1 slot
         if (isPlayer1) {
@@ -125,6 +139,7 @@ export class Game {
     }
 
     removePlayer(isPlayer1: boolean) {
+        console.log(`removing player: ${isPlayer1}`)
         if (isPlayer1) {
             this.player1?.leave(this.roomID)
             this.player1 = null
@@ -135,20 +150,23 @@ export class Game {
             this.player2Id = ""
         }
 
-        this.stage = "over"
-
         this.updateGame()
     }
 
     //inform the clients of the change in players
     updateGame() {
-        this.server.to(this.roomID).emit("game_updated", {
+        const gameState = {
+            roomID: this.roomID,
             playerSlot1: this.player1Id,
             playerSlot2: this.player2Id,
             board: this.board,
             isPlayer1Turn: this.isPlayer1Turn,
             isPlayer1First: this.isPlayer1First,
             stage: this.stage,
-        })
+        }
+
+        console.log(gameState)
+
+        this.server.to(this.roomID).emit("game_updated", gameState)
     }
 }

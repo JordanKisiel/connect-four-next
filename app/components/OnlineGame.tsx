@@ -20,7 +20,11 @@ import Modal from "./Modal"
 
 type GameStage = "waiting" | "in_progress" | "over"
 
-export default function Game() {
+type Props = {
+    gameID: string
+}
+
+export default function OnlineGame({ gameID }: Props) {
     //specifies dimensions of board
     //not configurable as the board is visually represented by a static asset
     //would have to find a way to create visual board procedurally if different
@@ -108,8 +112,9 @@ export default function Game() {
         setSelectedCol(CENTER_COL)
     }
 
-    function handlePlayerLeft(isPlayer1: boolean) {
-        socket.emit("player_left", { isPlayer1 })
+    function handlePlayerLeftGame(gameID: number, isPlayer1: boolean) {
+        console.log("player left game fired")
+        socket.emit("player_left_game", { gameID, isPlayer1 })
     }
 
     function handleStartNewGame() {
@@ -176,14 +181,18 @@ export default function Game() {
                     src={logo}
                     alt="logo"
                 />
-                <Button
-                    bgColor="bg-purple-500"
-                    textColor="text-neutral-100"
-                    paddingX="px-8"
-                    handler={() => handlePlayerLeft(isPlayer1)}
-                >
-                    Leave
-                </Button>
+                <Link href="/vs-player/lobby">
+                    <Button
+                        bgColor="bg-purple-500"
+                        textColor="text-neutral-100"
+                        paddingX="px-8"
+                        handler={() =>
+                            handlePlayerLeftGame(Number(gameID), isPlayer1)
+                        }
+                    >
+                        Leave
+                    </Button>
+                </Link>
             </div>
 
             <Board
@@ -240,7 +249,7 @@ export default function Game() {
                                       }
                             }
                         >
-                            Drop!
+                            {isPlayersTurn ? "Drop!" : "Other Player's Turn"}
                         </MenuButton>
                     </>
                 )}
@@ -248,21 +257,24 @@ export default function Game() {
 
             {stage === "waiting" && (
                 <Modal title="Waiting for other player...">
-                    <MenuButton
-                        handler={() => handlePlayerLeft}
-                        bgColor="bg-neutral-100"
-                        textColor="text-neutral-900"
-                        textAlign="text-center"
-                        path="/vs-player/lobby"
-                    >
-                        Back to Lobby
-                    </MenuButton>
+                    <Link href="/vs-player/lobby">
+                        <MenuButton
+                            handler={() =>
+                                handlePlayerLeftGame(Number(gameID), isPlayer1)
+                            }
+                            bgColor="bg-neutral-100"
+                            textColor="text-neutral-900"
+                            textAlign="text-center"
+                        >
+                            Back to Lobby
+                        </MenuButton>
+                    </Link>
                 </Modal>
             )}
 
             {stage === "over" && (
                 <ResultDisplay
-                    isPlayer1Turn={isPlayer1Turn}
+                    isPlayer1={isPlayer1}
                     isWinner={getWinningSpaces(board).length !== 0}
                     isBoardFull={isBoardFull(board)}
                     handler={handleStartNewGame}

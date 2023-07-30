@@ -9,7 +9,7 @@ type Props = {
     selectedCol: number
     board: Board
     isPlayer1Turn: boolean
-    isPlayersTurn: boolean
+    isPlayersTurn?: boolean
     winningSpaces: number[][]
 }
 

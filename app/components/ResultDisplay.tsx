@@ -3,24 +3,29 @@ import Button from "./Button"
 type Props = {
     isWinner: boolean
     isBoardFull: boolean
-    isPlayer1Turn: boolean
+    isPlayer1: boolean
     handler: Function
 }
 
 export default function ResultDisplay({
     isWinner,
     isBoardFull,
-    isPlayer1Turn,
+    isPlayer1,
     handler,
 }: Props) {
     let player = ""
     let resultText = ""
 
     if (isWinner) {
-        player = isPlayer1Turn ? "Player 1" : "Player 2"
+        player = isPlayer1 ? "Player 1" : "Player 2"
         resultText = "Wins"
     } else if (isBoardFull) {
         resultText = "Draw"
+    } else {
+        if (isPlayer1) {
+            player = "You"
+            resultText = "Win by Forfeit"
+        }
     }
 
     return (

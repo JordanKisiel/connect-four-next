@@ -39,13 +39,16 @@ export class Lobby {
             socket.leave("lobby")
         })
 
+        socket.on("player_left_game", ({ gameID, isPlayer1 }) => {
+            this.updateLobby()
+        })
+
         //whenever a client selects a player slot on the client
         //the server updates the lobby state and sends it back to the client
-        socket.on("select_slot", ({ roomID, playerSlot }) => {
-
+        socket.on("select_slot", ({ roomID, isPlayer1 }) => {
             //remove player from all games (which removes them from slots as well)
             for (let i = 1; i < this.games.length; i += 1) {
-                this.games[i].removePlayer(clientID)
+                this.games[i].removePlayer(isPlayer1)
             }
 
             //add player to selected game and slot
@@ -53,7 +56,6 @@ export class Lobby {
                 return game.roomID === roomID
             })[0]
 
-            const isPlayer1 = playerSlot === "player1"
             selectedGame.addPlayer(socket, isPlayer1)
 
             this.updateLobby()

@@ -9,7 +9,6 @@ type Props = {
     bgImage?: string
     textAlign: string
     padding?: string
-    path?: string
     handler?: Function
     children: React.ReactNode
 }
@@ -21,42 +20,9 @@ export default function MenuButton({
     bgImage,
     textAlign,
     padding,
-    path,
     handler,
     children,
 }: Props) {
-    if (path) {
-        return (
-            <Link
-                className="block"
-                href={path}
-            >
-                <button
-                    className={`
-                ${bgColor} 
-                ${textColor}
-                ${textSize || "text-2xl"} 
-                ${bgImage} 
-                ${textAlign} 
-                ${padding || "p-5"}
-                w-full
-                rounded-3xl
-                border-[3px]
-                border-neutral-900
-                bg-[center_right_1rem]
-                bg-no-repeat
-                font-bold
-                uppercase
-                shadow-2xl
-                sm:bg-none
-                `}
-                >
-                    {children}
-                </button>
-            </Link>
-        )
-    }
-
     return (
         <button
             className={`

@@ -7,7 +7,7 @@ type Props = {
     rowIndex: number
     winningSpaces: number[][]
     isPlayer1Turn: boolean
-    isPlayersTurn: boolean
+    isPlayersTurn?: boolean
     selectedCol: number
 }
 

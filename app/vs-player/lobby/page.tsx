@@ -19,6 +19,7 @@ export default function Lobby() {
             return (
                 <Room
                     key={index}
+                    gameID={index}
                     roomID={`Room ${index}`}
                     isSlot1Filled={lobby[index].playerSlot1 !== ""}
                     isSlot2Filled={lobby[index].playerSlot2 !== ""}

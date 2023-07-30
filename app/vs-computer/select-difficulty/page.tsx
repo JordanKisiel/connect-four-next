@@ -17,33 +17,36 @@ export default function Home() {
                     Select Difficulty
                 </h2>
                 <div className="mb-10 flex w-full flex-col space-y-6 px-2 md:mb-20">
-                    <MenuButton
-                        bgColor="bg-purple-500"
-                        textColor="text-neutral-100"
-                        textAlign="text-center"
-                        padding="p-3"
-                        path="/vs-computer/game/easy"
-                    >
-                        Easy
-                    </MenuButton>
-                    <MenuButton
-                        bgColor="bg-purple-500"
-                        textColor="text-neutral-100"
-                        textAlign="text-center"
-                        padding="p-3"
-                        path="/vs-computer/game/medium"
-                    >
-                        Medium
-                    </MenuButton>
-                    <MenuButton
-                        bgColor="bg-purple-500"
-                        textColor="text-neutral-100"
-                        textAlign="text-center"
-                        padding="p-3"
-                        path="/vs-computer/game/hard"
-                    >
-                        Hard
-                    </MenuButton>
+                    <Link href="/vs-computer/game/easy">
+                        <MenuButton
+                            bgColor="bg-purple-500"
+                            textColor="text-neutral-100"
+                            textAlign="text-center"
+                            padding="p-3"
+                        >
+                            Easy
+                        </MenuButton>
+                    </Link>
+                    <Link href="/vs-computer/game/medium">
+                        <MenuButton
+                            bgColor="bg-purple-500"
+                            textColor="text-neutral-100"
+                            textAlign="text-center"
+                            padding="p-3"
+                        >
+                            Medium
+                        </MenuButton>
+                    </Link>
+                    <Link href="/vs-computer/game/hard">
+                        <MenuButton
+                            bgColor="bg-purple-500"
+                            textColor="text-neutral-100"
+                            textAlign="text-center"
+                            padding="p-3"
+                        >
+                            Hard
+                        </MenuButton>
+                    </Link>
                 </div>
                 <Link href="/">
                     <Button

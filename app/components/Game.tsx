@@ -321,7 +321,7 @@ export default function Game({ difficulty }: Props) {
 
             {isGameOver && (
                 <ResultDisplay
-                    isPlayer1Turn={isPlayer1Turn}
+                    isPlayer1={isPlayer1Turn}
                     isWinner={getWinningSpaces(board).length !== 0}
                     isBoardFull={isBoardFull(board)}
                     handler={handleNewGame}

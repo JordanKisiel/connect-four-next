@@ -2,11 +2,11 @@
 
 import { useEffect } from "react"
 import Image from "next/image"
+import Link from "next/link"
 import logo from "../public/logo.svg"
 import MenuButton from "./components/MenuButton"
 import { socket } from "@/lib/socket"
 import { getClientID } from "@/lib/clientID"
-
 
 export default function Home() {
     useEffect(() => {
@@ -46,32 +46,35 @@ export default function Home() {
                 alt="logo"
             />
             <div className="flex w-full flex-col space-y-6 px-2 lg:max-w-[35rem]">
-                <MenuButton
-                    bgColor="bg-red-300"
-                    textColor="text-neutral-100"
-                    textAlign="text-left"
-                    bgImage="md:bg-[url(../public/player-vs-cpu.svg)]"
-                    path="/vs-computer/select-difficulty"
-                >
-                    Play vs CPU
-                </MenuButton>
-                <MenuButton
-                    bgColor="bg-yellow-300"
-                    textColor="text-neutral-900"
-                    textAlign="text-left"
-                    bgImage="md:bg-[url(../public/player-vs-player.svg)]"
-                    path="/vs-player/lobby"
-                >
-                    Player vs Player
-                </MenuButton>
-                <MenuButton
-                    bgColor="bg-neutral-100"
-                    textColor="text-neutral-900"
-                    textAlign="text-left"
-                    path="/rules"
-                >
-                    Game Rules
-                </MenuButton>
+                <Link href="/vs-computer/select-difficulty">
+                    <MenuButton
+                        bgColor="bg-red-300"
+                        textColor="text-neutral-100"
+                        textAlign="text-left"
+                        bgImage="md:bg-[url(../public/player-vs-cpu.svg)]"
+                    >
+                        Play vs CPU
+                    </MenuButton>
+                </Link>
+                <Link href="/vs-player/lobby">
+                    <MenuButton
+                        bgColor="bg-yellow-300"
+                        textColor="text-neutral-900"
+                        textAlign="text-left"
+                        bgImage="md:bg-[url(../public/player-vs-player.svg)]"
+                    >
+                        Player vs Player
+                    </MenuButton>
+                </Link>
+                <Link href="/rules">
+                    <MenuButton
+                        bgColor="bg-neutral-100"
+                        textColor="text-neutral-900"
+                        textAlign="text-left"
+                    >
+                        Game Rules
+                    </MenuButton>
+                </Link>
             </div>
         </div>
     )
