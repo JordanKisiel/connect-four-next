@@ -5,39 +5,29 @@ import {
 } from "../lib/connect4-utilities.ts"
 import { Board } from "../types.ts"
 import { Server, Socket } from "socket.io"
+import { Player } from "./player.ts"
 
 const BOARD_ROWS = 6
 const BOARD_COLS = 7
-const CENTER_COL = 3
 
 export class Game {
-    timeStamp: number
     roomID: string
     server: Server
-    player1: Socket | null
-    player2: Socket | null
-    player1Id: string
-    player2Id: string
+    player1: Player | null
+    player2: Player | null
     board: Board
-    selectedCol: number
     isPlayer1Turn: boolean
     isPlayer1First: boolean
     stage: "waiting" | "in_progress" | "over"
 
     constructor(roomID: string, server: Server) {
-        //testing with timeStamp
-        this.timeStamp = Date.now()
-
         this.roomID = roomID
         this.server = server
 
         this.player1 = null
         this.player2 = null
-        this.player1Id = ""
-        this.player2Id = ""
 
         this.board = getEmptyBoard(BOARD_ROWS, BOARD_COLS)
-        this.selectedCol = CENTER_COL
 
         this.isPlayer1Turn = true
         //who goes first alternates with each game
@@ -78,40 +68,25 @@ export class Game {
             this.isPlayer1Turn = !this.isPlayer1Turn
         }
 
-        //reset selected col to center col after move
-        this.selectedCol = CENTER_COL
-
         this.updateGame()
     }
 
-    //sets up a new game if the players choose to play again
-    startNewGame() {
-        this.board = getEmptyBoard(BOARD_ROWS, BOARD_COLS)
-        this.selectedCol = CENTER_COL
-        //player that makes the first move of the new
-        //game is the player who went second in the previous
-        this.isPlayer1First = !this.isPlayer1First
-        this.isPlayer1Turn = this.isPlayer1First
+    addPlayer(player: Player) {
+        console.log(`${player.playerID} joining game`)
+        player.playerSocket.join(this.roomID)
 
-        this.stage = "in_progress"
-    }
-
-    addPlayer(player: Socket, isPlayer1: boolean) {
-        console.log(`${player.handshake.auth.id} joining game`)
-        player.join(this.roomID)
-
-        player.on("player_joined", () => {
+        player.playerSocket.on("player_joined", () => {
             console.log("player joined -- updating game")
             this.updateGame()
         })
 
-        player.on("disc_dropped", ({ selectedCol, isPlayer1 }) => {
+        player.playerSocket.on("disc_dropped", ({ selectedCol, isPlayer1 }) => {
             console.log("dropping disc")
             this.dropDisc(selectedCol, isPlayer1)
         })
 
-        player.on("player_left_game", ({ isPlayer1 }) => {
-            this.removePlayer(isPlayer1)
+        player.playerSocket.on("player_left_game", () => {
+            this.removePlayer(player)
 
             if (this.player1 !== null || this.player2 != null) {
                 this.stage = "over" //other player wins by default
@@ -123,42 +98,80 @@ export class Game {
         })
 
         //playerSlot of true denotes player1 slot
-        if (isPlayer1) {
+        if (player.isPlayer1) {
             this.player1 = player
-            this.player1Id = player.handshake.auth.id
         } else {
             this.player2 = player
-            this.player2Id = player.handshake.auth.id
         }
 
-        if (this.player1Id !== "" && this.player2Id !== "") {
+        //if both player slots are filled, start game
+        if (this.player1 !== null && this.player2 !== null) {
             this.stage = "in_progress"
         }
 
         this.updateGame()
     }
 
-    removePlayer(isPlayer1: boolean) {
-        console.log(`removing player: ${isPlayer1}`)
-        if (isPlayer1) {
-            this.player1?.leave(this.roomID)
+    //sets up a new game if the players choose to play again
+    startNewGame() {
+        console.log("STARTING NEW GAME")
+        this.board = getEmptyBoard(BOARD_ROWS, BOARD_COLS)
+        //player that makes the first move of the new
+        //game is the player who went second in the previous
+        this.isPlayer1First = !this.isPlayer1First
+        this.isPlayer1Turn = this.isPlayer1First
+
+        this.stage = "in_progress"
+    }
+
+    removePlayer(player: Player) {
+        if (player.isPlayer1) {
             this.player1 = null
-            this.player1Id = ""
         } else {
-            this.player2?.leave(this.roomID)
             this.player2 = null
-            this.player2Id = ""
         }
+
+        player.playerSocket.leave(this.roomID)
+        player.playerSocket.removeAllListeners("player_joined")
+        player.playerSocket.removeAllListeners("disc_dropped")
+        player.playerSocket.removeAllListeners("player_left_game")
 
         this.updateGame()
     }
 
+    //reset game mechanic states back to defaults
+    //this is for starting a completely new set of games
+    resetGame() {
+        console.log("RESETTING GAME")
+        this.board = getEmptyBoard(BOARD_ROWS, BOARD_COLS)
+        this.isPlayer1Turn = true
+        this.isPlayer1First = true
+        this.stage = "waiting"
+    }
+
     //inform the clients of the change in players
     updateGame() {
+        //if there are no players, reset the game
+        if (this.player1 === null && this.player2 === null) {
+            this.resetGame()
+        }
+
+        //when the game ends, unready players
+        if (this.stage === "over") {
+            if (this.player1) this.player1.isReady = false
+            if (this.player2) this.player2.isReady = false
+        }
+
         const gameState = {
             roomID: this.roomID,
-            playerSlot1: this.player1Id,
-            playerSlot2: this.player2Id,
+            player1: {
+                playerID: this.player1?.playerID || "",
+                isReady: this.player1?.isReady,
+            },
+            player2: {
+                playerID: this.player2?.playerID || "",
+                isReady: this.player2?.isReady,
+            },
             board: this.board,
             isPlayer1Turn: this.isPlayer1Turn,
             isPlayer1First: this.isPlayer1First,
@@ -167,6 +180,7 @@ export class Game {
 
         console.log(gameState)
 
+        //send the game state to the players
         this.server.to(this.roomID).emit("game_updated", gameState)
     }
 }

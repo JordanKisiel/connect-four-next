@@ -15,7 +15,7 @@ export default function ResultDisplay({
     isPlayer1,
     handler,
 }: Props) {
-    const player = "You"
+    let player = "You"
     let resultText = ""
 
     //cases to account for:
@@ -32,6 +32,7 @@ export default function ResultDisplay({
             resultText = "Lose"
         }
     } else if (isBoardFull) {
+        player = ""
         resultText = "Draw"
     } else {
         resultText = "Win By Forfeit"

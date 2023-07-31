@@ -32,8 +32,8 @@ io.on("connection", (socket) => {
         //remove player from games and lobby
         for (let i = 1; i < lobby.games.length; i += 1) {
             if (
-                lobby.games[i].player1Id === clientID ||
-                lobby.games[i].player2Id === clientID
+                lobby.games[i].player1?.playerID === clientID ||
+                lobby.games[i].player2?.playerID === clientID
             ) {
                 lobby.games[i].removePlayer(clientID)
             }

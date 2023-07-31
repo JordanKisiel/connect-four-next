@@ -7,6 +7,7 @@ import {
     getWinningSpaces,
     isBoardFull,
     getEmptyBoard,
+    isWinner,
 } from "@/lib/connect4-utilities"
 import { getClientID } from "@/lib/clientID"
 import { socket } from "@/lib/socket"
@@ -15,10 +16,21 @@ import Button from "./Button"
 import MenuButton from "./MenuButton"
 import Board from "./Board"
 import ColumnSelectButton from "./ColumnSelectButton"
-import ResultDisplay from "./ResultDisplay"
+import OnlineResultDisplay from "./OnlineResultDisplay"
 import Modal from "./Modal"
 
 type GameStage = "waiting" | "in_progress" | "over"
+
+type PlayerSlots = {
+    playerSlot1: {
+        playerID: string
+        isReady: boolean | null
+    }
+    playerSlot2: {
+        playerID: string
+        isReady: boolean | null
+    }
+}
 
 type Props = {
     gameID: string
@@ -46,6 +58,7 @@ export default function OnlineGame({ gameID }: Props) {
     })
 
     //this represents the index of the selected column on the board
+    //tracked client side to avoid latency
     const [selectedCol, setSelectedCol] = useState(CENTER_COL)
 
     //indicates role of player in this instance of the client
@@ -54,8 +67,8 @@ export default function OnlineGame({ gameID }: Props) {
 
     //holds the playerIDs
     const [playerSlots, setPlayerSlots] = useState({
-        playerSlot1: "",
-        playerSlot2: "",
+        playerSlot1: { playerID: "", isReady: null },
+        playerSlot2: { playerID: "", isReady: null },
     })
 
     //keeps track of whose turn it is
@@ -70,6 +83,11 @@ export default function OnlineGame({ gameID }: Props) {
     const isPlayersTurn =
         (isPlayer1Turn && isPlayer1) || (!isPlayer1Turn && !isPlayer1)
 
+    //compute whether current player is ready to start new game
+    const isPlayerReady =
+        (isPlayer1 && playerSlots.playerSlot1.isReady) ||
+        (!isPlayer1 && playerSlots.playerSlot2.isReady)
+
     useEffect(() => {
         const clientID = getClientID()
 
@@ -78,10 +96,10 @@ export default function OnlineGame({ gameID }: Props) {
 
             setStage(game.stage)
             setPlayerSlots({
-                playerSlot1: game.playerSlot1,
-                playerSlot2: game.playerSlot2,
+                playerSlot1: game.player1,
+                playerSlot2: game.player2,
             })
-            if (game.playerSlot1 === clientID) {
+            if (game.player1.playerID === clientID) {
                 setIsPlayer1(true)
             } else {
                 setIsPlayer1(false)
@@ -92,6 +110,10 @@ export default function OnlineGame({ gameID }: Props) {
         })
 
         socket.emit("player_joined")
+
+        return () => {
+            socket.off("game_updated")
+        }
     }, [])
 
     //handles the change of column by incrementing or decrementing the index
@@ -113,12 +135,11 @@ export default function OnlineGame({ gameID }: Props) {
     }
 
     function handlePlayerLeftGame(gameID: number, isPlayer1: boolean) {
-        console.log("player left game fired")
         socket.emit("player_left_game", { gameID, isPlayer1 })
     }
 
-    function handleStartNewGame() {
-        socket.emit("start_new_game")
+    function handlePlayAgain() {
+        socket.emit("play_again", { gameID, isPlayer1 })
     }
 
     function getBGToUse(isWinner: boolean, isPlayer1Turn: boolean): string {
@@ -209,7 +230,8 @@ export default function OnlineGame({ gameID }: Props) {
                     <>
                         <div className="mb-12 flex w-full items-center justify-between sm:mb-9 md:mb-8 lg:mb-6">
                             <ColumnSelectButton
-                                isPlayer1Turn={isPlayer1Turn}
+                                isPlayersTurn={isPlayersTurn}
+                                isPlayer1={isPlayer1}
                                 isLeft={true}
                                 handleColSelect={
                                     isPlayersTurn
@@ -220,7 +242,8 @@ export default function OnlineGame({ gameID }: Props) {
                                 }
                             />
                             <ColumnSelectButton
-                                isPlayer1Turn={isPlayer1Turn}
+                                isPlayersTurn={isPlayersTurn}
+                                isPlayer1={isPlayer1}
                                 isLeft={false}
                                 handleColSelect={
                                     isPlayersTurn
@@ -233,7 +256,13 @@ export default function OnlineGame({ gameID }: Props) {
                         </div>
                         <MenuButton
                             bgColor={
-                                isPlayer1Turn ? "bg-red-300" : "bg-yellow-300"
+                                isPlayer1
+                                    ? isPlayersTurn
+                                        ? "bg-red-300"
+                                        : "bg-neutral-300"
+                                    : isPlayersTurn
+                                    ? "bg-yellow-300"
+                                    : "bg-neutral-300"
                             }
                             textColor={
                                 isPlayer1Turn
@@ -256,7 +285,23 @@ export default function OnlineGame({ gameID }: Props) {
             </div>
 
             {stage === "waiting" && (
-                <Modal title="Waiting for other player...">
+                <Modal
+                    title={
+                        isPlayerReady
+                            ? "Waiting for other player..."
+                            : "Other player ready"
+                    }
+                >
+                    {!isPlayerReady && (
+                        <Button
+                            bgColor="bg-purple-500"
+                            textColor="text-neutral-100"
+                            paddingX="px-7"
+                            handler={handlePlayAgain}
+                        >
+                            Play Again
+                        </Button>
+                    )}
                     <Link href="/vs-player/lobby">
                         <MenuButton
                             handler={() =>
@@ -273,11 +318,12 @@ export default function OnlineGame({ gameID }: Props) {
             )}
 
             {stage === "over" && (
-                <ResultDisplay
+                <OnlineResultDisplay
                     isPlayer1={isPlayer1}
-                    isWinner={getWinningSpaces(board).length !== 0}
+                    isWinner={getWinningSpaces(board).length > 0}
+                    isPlayerWinner={isWinner(isPlayer1, board)}
                     isBoardFull={isBoardFull(board)}
-                    handler={handleStartNewGame}
+                    handler={handlePlayAgain}
                 />
             )}
         </div>

@@ -90,6 +90,26 @@ export function getWinningSpaces(board: Board): number[][] | [] {
     return [] //if no winning line, return empty array
 }
 
+//returns boolean indicating whether the given player has won the game
+//given the board position
+//player is specified by boolean indicating status as player 1 or not
+export function isWinner(isPlayer1: boolean, board: Board) {
+    const winningSpaces = getWinningSpaces(board)
+
+    if (winningSpaces.length > 0) {
+        const [xCoord, yCoord] = winningSpaces[0]
+        if (isPlayer1 && board[xCoord][yCoord]) {
+            return true
+        } else if (!isPlayer1 && !board[xCoord][yCoord]) {
+            return true
+        } else {
+            return false
+        }
+    } else {
+        return false
+    }
+}
+
 //iterate through each space on the board
 //if any are null (representing an empty space)
 //then board is not full
