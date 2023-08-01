@@ -27,6 +27,7 @@ export default function Modal({ title, children }: Props) {
             text-neutral-100
             shadow-2xl
             md:w-[65%]
+            md:max-w-[30rem]
             "
         >
             <span className="text-center text-base font-bold uppercase md:text-2xl">

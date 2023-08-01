@@ -1,14 +1,20 @@
 "use client"
 
-import { useEffect } from "react"
+import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import logo from "../public/logo.svg"
 import MenuButton from "./components/MenuButton"
+import Modal from "./components/Modal"
 import { socket } from "@/lib/socket"
 import { getClientID } from "@/lib/clientID"
 
 export default function Home() {
+    const [rejoinModal, setRejoinModal] = useState({
+        show: false,
+        gameID: "",
+    })
+
     useEffect(() => {
         //get client id or generate it for the first time
         const id = getClientID()
@@ -28,6 +34,16 @@ export default function Home() {
         socket.on("connect", onConnect)
         socket.on("disconnect", onDisconnect)
 
+        //if the player lost connection and can rejoin a game
+        //show modal allowing them to choose to do so
+        socket.on("player_rejoining", ({ gameID }) => {
+            console.log("added player rejoin listener")
+            setRejoinModal({
+                show: true,
+                gameID,
+            })
+        })
+
         socket.connect()
         //used when user nagivates back to home page from the lobby page
         socket.emit("leave_lobby")
@@ -37,6 +53,18 @@ export default function Home() {
             socket.off("disconnect", onDisconnect)
         }
     }, [])
+
+    function handleCancelRejoin() {
+        socket.emit("cancelled_rejoin", {
+            gameID: rejoinModal.gameID,
+            playerID: getClientID(),
+        })
+
+        setRejoinModal({
+            show: false,
+            gameID: "",
+        })
+    }
 
     return (
         <div className="mt-[-5rem] flex w-full flex-col items-center md:max-w-[30rem]">
@@ -76,6 +104,36 @@ export default function Home() {
                     </MenuButton>
                 </Link>
             </div>
+
+            {rejoinModal.show && (
+                <Modal title="Found Game in Progress...">
+                    <Link
+                        href={`/vs-player/game/${rejoinModal.gameID}`}
+                        className="w-full"
+                    >
+                        <MenuButton
+                            bgColor="bg-neutral-100"
+                            textColor="text-neutral-900"
+                            textAlign="text-center"
+                        >
+                            Rejoin
+                        </MenuButton>
+                    </Link>
+                    <Link
+                        href="/"
+                        className="w-full"
+                    >
+                        <MenuButton
+                            bgColor="bg-red-300"
+                            textColor="text-neutral-900"
+                            textAlign="text-center"
+                            handler={handleCancelRejoin}
+                        >
+                            Cancel
+                        </MenuButton>
+                    </Link>
+                </Modal>
+            )}
         </div>
     )
 }

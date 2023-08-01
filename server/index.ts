@@ -1,7 +1,7 @@
 import { Lobby } from "./lobby.js"
 import express from "express"
 import { createServer } from "http"
-import { Server, Socket } from "socket.io"
+import { Server } from "socket.io"
 import cors from "cors"
 
 const app = express()
@@ -28,18 +28,6 @@ io.on("connection", (socket) => {
 
     socket.on("disconnect", async () => {
         console.log(`User disconnected: ${clientID}`)
-
-        //remove player from games and lobby
-        for (let i = 1; i < lobby.games.length; i += 1) {
-            if (
-                lobby.games[i].player1?.playerID === clientID ||
-                lobby.games[i].player2?.playerID === clientID
-            ) {
-                lobby.games[i].removePlayer(clientID)
-            }
-        }
-
-        lobby.updateLobby()
     })
 })
 

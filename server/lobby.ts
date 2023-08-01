@@ -28,8 +28,6 @@ export class Lobby {
     //note: being in the lobby doesn't mean that the user
     //has selected a player slot
     addUser(socket: Socket) {
-        const clientID = socket.handshake.auth.id
-
         //register lobby events
         socket.on("start_lobby", () => {
             socket.join("lobby")
@@ -87,6 +85,47 @@ export class Lobby {
 
             game.updateGame()
         })
+
+        socket.on("cancelled_rejoin", ({ gameID, playerID }) => {
+            this.cancelRejoin(gameID, playerID)
+        })
+
+        this.attemptRejoin(socket)
+    }
+
+    //search through games for player and, if found,
+    //allow player the option to rejoin if they were disconnected
+    //and the game is still in progress
+    attemptRejoin(socket: Socket) {
+        for (let i = 1; i < this.games.length; i += 1) {
+            const clientID = socket.handshake.auth.id
+            const game = this.games[i]
+            if (clientID === game.player1?.playerID) {
+                const foundGameID = game.roomID.charAt(game.roomID.length - 1)
+                game.addPlayer(new Player(socket, true, true))
+                socket.emit("player_rejoining", { gameID: foundGameID })
+            }
+
+            if (clientID === game.player2?.playerID) {
+                const foundGameID = game.roomID.charAt(game.roomID.length - 1)
+                game.addPlayer(new Player(socket, false, true))
+                socket.emit("player_rejoining", { gameID: foundGameID })
+            }
+        }
+    }
+
+    cancelRejoin(gameID: string, playerID: string) {
+        const game = this.games[Number(gameID)]
+
+        if (playerID === game.player1?.playerID) {
+            if (game.player1) game.removePlayer(game.player1)
+        }
+        if (playerID === game.player2?.playerID) {
+            if (game.player2) game.removePlayer(game.player2)
+        }
+
+        game.stage = "over"
+        game.updateGame()
     }
 
     updateLobby() {
