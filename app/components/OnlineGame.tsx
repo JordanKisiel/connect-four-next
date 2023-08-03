@@ -18,6 +18,7 @@ import Board from "./Board"
 import ColumnSelectButton from "./ColumnSelectButton"
 import OnlineResultDisplay from "./OnlineResultDisplay"
 import Modal from "./Modal"
+import TurnTimer from "./TurnTimer"
 
 type GameStage = "waiting" | "in_progress" | "over"
 
@@ -187,7 +188,7 @@ export default function OnlineGame({ gameID }: Props) {
                 lg:pt-[8%]
                 `}
         >
-            <div className="relative mb-24 flex w-full items-center justify-between md:mb-24">
+            <div className="relative mb-16 flex w-full items-center justify-between md:mb-16">
                 <Link href="/">
                     <Button
                         bgColor="bg-purple-500"
@@ -215,6 +216,13 @@ export default function OnlineGame({ gameID }: Props) {
                     </Button>
                 </Link>
             </div>
+
+            <TurnTimer
+                paddingX="px-6"
+                isPlayer1={isPlayer1}
+                isPlayersTurn={isPlayersTurn}
+                startTime={90}
+            />
 
             <Board
                 numColumns={BOARD_COLS}
