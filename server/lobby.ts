@@ -45,7 +45,6 @@ export class Lobby {
         //whenever a client selects a player slot on the client
         //the server updates the lobby state and sends it back to the client
         socket.on("select_slot", ({ roomID, isPlayer1 }) => {
-            console.log(`PLAYER IS JOINING AS ISPLAYER1: ${isPlayer1}`)
             const player = new Player(socket, isPlayer1, true)
 
             //remove player from all games (which removes them from slots as well)

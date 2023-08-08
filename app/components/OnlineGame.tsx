@@ -48,6 +48,8 @@ export default function OnlineGame({ gameID }: Props) {
     //center colum is at index 3
     const CENTER_COL = 3
 
+    const PLAYER_TURN_DURATION = 90 //in seconds
+
     //indication of which stage of the game's lifecycle it's in
     const [stage, setStage] = useState<GameStage>("waiting")
 
@@ -78,7 +80,14 @@ export default function OnlineGame({ gameID }: Props) {
     //keeps track of which player made the first move this game
     //needed because the players alternate who goes first each game
     //regardless of who won the last game
+    //TODO: reconsider if this is actually needed
     const [isPlayer1First, setIsPlayer1First] = useState(true)
+
+    //remaining time for turn
+    //refers to the remaining time as tracked by the server
+    //client side timer should be more or less in sync but
+    //the server time is the authority
+    const [remainingTime, setRemainingTime] = useState(PLAYER_TURN_DURATION)
 
     //compute whether it's the player's turn or not
     const isPlayersTurn =
@@ -96,6 +105,7 @@ export default function OnlineGame({ gameID }: Props) {
             const game = data
 
             setStage(game.stage)
+            setRemainingTime(game.remainingTurnTime)
             setPlayerSlots({
                 playerSlot1: game.player1,
                 playerSlot2: game.player2,
@@ -218,6 +228,7 @@ export default function OnlineGame({ gameID }: Props) {
             </div>
 
             <TurnTimer
+                gameStage={stage}
                 paddingX="px-6"
                 isPlayer1={isPlayer1}
                 isPlayersTurn={isPlayersTurn}
@@ -327,10 +338,11 @@ export default function OnlineGame({ gameID }: Props) {
 
             {stage === "over" && (
                 <OnlineResultDisplay
-                    isPlayer1={isPlayer1}
+                    isPlayersTurn={isPlayersTurn}
                     isWinner={getWinningSpaces(board).length > 0}
                     isPlayerWinner={isWinner(isPlayer1, board)}
                     isBoardFull={isBoardFull(board)}
+                    isTimeLeft={remainingTime > 0}
                     handler={handlePlayAgain}
                 />
             )}

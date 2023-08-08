@@ -4,7 +4,8 @@ type Props = {
     isWinner: boolean
     isPlayerWinner: boolean
     isBoardFull: boolean
-    isPlayer1: boolean
+    isPlayersTurn: boolean
+    isTimeLeft: boolean
     handler: Function
 }
 
@@ -12,7 +13,8 @@ export default function ResultDisplay({
     isWinner,
     isPlayerWinner,
     isBoardFull,
-    isPlayer1,
+    isPlayersTurn,
+    isTimeLeft,
     handler,
 }: Props) {
     let player = "You"
@@ -24,6 +26,8 @@ export default function ResultDisplay({
     // draw
     // player1 wins by forfeit
     // player2 wins by forfeit
+    // player1 wins by timeout
+    // player2 wins by timeout
 
     if (isWinner) {
         if (isPlayerWinner) {
@@ -34,6 +38,13 @@ export default function ResultDisplay({
     } else if (isBoardFull) {
         player = ""
         resultText = "Draw"
+    } else if (!isTimeLeft) {
+        //time expired
+        if (isPlayersTurn) {
+            resultText = "Lost on time"
+        } else {
+            resultText = "Win on Time"
+        }
     } else {
         resultText = "Win By Forfeit"
     }

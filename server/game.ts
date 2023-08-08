@@ -4,15 +4,19 @@ import {
     isBoardFull,
 } from "../lib/connect4-utilities.ts"
 import { Board } from "../types.ts"
-import { Server, Socket } from "socket.io"
+import { Server } from "socket.io"
 import { Player } from "./player.ts"
+import { Timer } from "./timer.ts"
 
 const BOARD_ROWS = 6
 const BOARD_COLS = 7
 
+const TURN_TIMER_START_DUR = 92 //in seconds
+
 export class Game {
     roomID: string
     server: Server
+    turnTimer: Timer
     player1: Player | null
     player2: Player | null
     board: Board
@@ -23,6 +27,11 @@ export class Game {
     constructor(roomID: string, server: Server) {
         this.roomID = roomID
         this.server = server
+
+        this.turnTimer = new Timer(TURN_TIMER_START_DUR, () => {
+            this.stage = "over"
+            this.updateGame()
+        })
 
         this.player1 = null
         this.player2 = null
@@ -63,9 +72,12 @@ export class Game {
         //if there is a win or draw, the game is over
         if (isWin || isBoardFull(this.board)) {
             this.stage = "over"
+            this.turnTimer.reset()
         } else {
             //otherwise play continues so change player turn
             this.isPlayer1Turn = !this.isPlayer1Turn
+            //and restart turn timer
+            this.turnTimer.start()
         }
 
         this.updateGame()
@@ -88,10 +100,19 @@ export class Game {
         player.playerSocket.on("player_left_game", () => {
             this.removePlayer(player)
 
-            if (this.player1 !== null || this.player2 != null) {
-                this.stage = "over" //other player wins by default
+            if (this.player1 === null && this.player2 === null) {
+                this.stage = "waiting" //there are no players
+                this.turnTimer.reset()
             } else {
-                this.stage = "waiting"
+                this.stage = "over" //other player wins by default
+                this.turnTimer.reset()
+
+                //remaining player gets put into unready state
+                if (this.player1) {
+                    this.player1.isReady = false
+                } else if (this.player2) {
+                    this.player2.isReady = false
+                }
             }
 
             this.updateGame()
@@ -104,9 +125,15 @@ export class Game {
             this.player2 = player
         }
 
-        //if both player slots are filled, start game
-        if (this.player1 !== null && this.player2 !== null) {
+        const bothSlotsFilled = this.player1 !== null && this.player2 !== null
+        const bothPlayersReady = this.player1?.isReady && this.player2?.isReady
+
+        if (bothSlotsFilled && bothPlayersReady) {
             this.stage = "in_progress"
+            this.turnTimer.start()
+        } else {
+            this.stage = "waiting"
+            this.turnTimer.reset()
         }
 
         this.updateGame()
@@ -122,6 +149,7 @@ export class Game {
         this.isPlayer1Turn = this.isPlayer1First
 
         this.stage = "in_progress"
+        this.turnTimer.start()
     }
 
     removePlayer(player: Player) {
@@ -147,6 +175,7 @@ export class Game {
         this.isPlayer1Turn = true
         this.isPlayer1First = true
         this.stage = "waiting"
+        this.turnTimer.reset()
     }
 
     //inform the clients of the change in players
@@ -164,6 +193,7 @@ export class Game {
 
         const gameState = {
             roomID: this.roomID,
+            remainingTurnTime: this.turnTimer.remainingTime,
             player1: {
                 playerID: this.player1?.playerID || "",
                 isReady: this.player1?.isReady,
