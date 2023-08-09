@@ -272,7 +272,8 @@ export default function Game({ difficulty }: Props) {
                     <>
                         <div className="mb-12 flex w-full items-center justify-between sm:mb-9 sm:scale-[0.9] md:mb-8 md:scale-100 lg:mb-6">
                             <ColumnSelectButton
-                                isPlayer1Turn={isPlayer1Turn}
+                                isPlayersTurn={isPlayer1Turn}
+                                isPlayer1={true}
                                 isLeft={true}
                                 handleColSelect={
                                     isPlayer1Turn
@@ -283,7 +284,8 @@ export default function Game({ difficulty }: Props) {
                                 }
                             />
                             <ColumnSelectButton
-                                isPlayer1Turn={isPlayer1Turn}
+                                isPlayersTurn={isPlayer1Turn}
+                                isPlayer1={true}
                                 isLeft={false}
                                 handleColSelect={
                                     isPlayer1Turn
@@ -296,7 +298,7 @@ export default function Game({ difficulty }: Props) {
                         </div>
                         <MenuButton
                             bgColor={
-                                isPlayer1Turn ? "bg-red-300" : "bg-yellow-300"
+                                isPlayer1Turn ? "bg-red-300" : "bg-neutral-300"
                             }
                             textColor={
                                 isPlayer1Turn
@@ -313,7 +315,7 @@ export default function Game({ difficulty }: Props) {
                                       }
                             }
                         >
-                            Drop!
+                            {isPlayer1Turn ? "Drop!" : "CPU Move"}
                         </MenuButton>
                     </>
                 )}

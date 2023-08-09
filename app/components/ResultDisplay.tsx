@@ -17,15 +17,10 @@ export default function ResultDisplay({
     let resultText = ""
 
     if (isWinner) {
-        player = isPlayer1 ? "Player 1" : "Player 2"
-        resultText = "Wins"
+        player = isPlayer1 ? "You" : "CPU"
+        resultText = isPlayer1 ? "Win!" : "Wins"
     } else if (isBoardFull) {
         resultText = "Draw"
-    } else {
-        if (isPlayer1) {
-            player = "You"
-            resultText = "Win by Forfeit"
-        }
     }
 
     return (
