@@ -178,3 +178,16 @@ export function getTotalDiscs(board: Board): number {
 
     return totalDiscs
 }
+
+export function getNumOpenCols(board: Board): number {
+    let openCols = 0
+
+    for (let row = 0; row < board.length; row += 1) {
+        const lastIndex = board[row].length - 1
+        if (board[row][lastIndex] === null) {
+            openCols += 1
+        }
+    }
+
+    return openCols
+}

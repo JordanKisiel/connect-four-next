@@ -5,14 +5,17 @@ import {
     isBoardFull,
     getEmptyBoard,
     getTotalDiscs,
+    getNumOpenCols,
 } from "@/lib/connect4-utilities"
 
 //consective spaces on board
 //adds string type to check for out of bounds spaces
 type Line = (boolean | null | string)[]
 
+type Move = [Board, number]
+
 //AI accepts 3 difficulty settings and chooses from
-//the top 3 ranked moves given by a minimax algorithm
+//the top ranked moves given by a minimax algorithm (up to top 3)
 //the frequecy of sub-optimal moves increases as more moves are made
 //which replicates the feeling of a human making more mistakes
 //in more complex situations
@@ -22,76 +25,100 @@ export function getAIMove(board: Board, difficulty: Difficulty): number {
     //but depth of 4 is an adequate challenge for the average human player
     const DEPTH = 4
     const TOTAL_SPACES = 42
-    //adjusts how quickly the AI will start to choose the second and third ranked moves
-    const EASY_SUB_OPTIMAL_CHOICE_VELOCITY = 20
-    const MEDIUM_SUB_OPTIMAL_CHOICE_VELOCITY = 18.75
-    const HARD_SUB_OPTIMAL_CHOICE_VELOCITY = 17.5
+    //adjusts how quickly the AI will start to choose worse moves
+    const EASY_SUB_OPTIMAL_CHOICE_VELOCITY = 24
+    const MEDIUM_SUB_OPTIMAL_CHOICE_VELOCITY = 18
+    const HARD_SUB_OPTIMAL_CHOICE_VELOCITY = 15
 
-    //array of child positions and their associated eval scores
-    //limited to best 3 positions by score
-    let best3Moves: [Board, number][] = [
-        [getEmptyBoard(6, 7), Number.POSITIVE_INFINITY],
-        [getEmptyBoard(6, 7), Number.POSITIVE_INFINITY],
-        [getEmptyBoard(6, 7), Number.POSITIVE_INFINITY],
-    ]
+    //limited to either the number of valid moves or 3
+    //whichever is less
+    const numMovesToChooseFrom =
+        getNumOpenCols(board) < 3 ? getNumOpenCols(board) : 3
+
+    let bestMoves: Move[] = []
 
     let chosenMove = undefined
 
-    //add best 3 moves to array by analyzing child positions
+    let weights: number[] = []
+
+    //array of child positions and their associated eval scores
+    //limited to best positions by score
+    for (let i = 0; i < numMovesToChooseFrom; i += 1) {
+        const move: Move = [getEmptyBoard(6, 7), Number.POSITIVE_INFINITY]
+        bestMoves.push(move)
+    }
+
+    //use different weights array based upon number of best moves
+    if (bestMoves.length === 3) {
+        weights = [0.5, 0.4, 0.1]
+    } else if (bestMoves.length === 2) {
+        weights = [0.5, 0.5]
+    } else {
+        weights = [1]
+    }
+
+    //add best moves to array by analyzing child positions
     getChildPositions(board, false).forEach((childPos) => {
         let score = minimax(childPos, DEPTH, true)
 
         //compare score to scores of best positions so far
-        for (let i = 0; i < best3Moves.length; i++) {
-            if (score < best3Moves[i][1]) {
-                best3Moves.splice(i, 0, [childPos, score]) //add position to best 3 moves
-                best3Moves.pop() //get rid of the extraneous position
+        for (let i = 0; i < bestMoves.length; i++) {
+            if (score < bestMoves[i][1]) {
+                bestMoves.splice(i, 0, [childPos, score]) //add position to best 3 moves
+                bestMoves.pop() //get rid of the extraneous position
                 break //only want to replace one score
             }
         }
     })
 
-    const rand = Math.random()
-    const boardComplexity = 1 / (TOTAL_SPACES - getTotalDiscs(board))
+    let remainingOpenSpaces = TOTAL_SPACES - getTotalDiscs(board)
+    //check for 0 in case board is full, don't want to divide by 0
+    remainingOpenSpaces = remainingOpenSpaces === 0 ? 1 : remainingOpenSpaces
+    const boardComplexity = 1 / remainingOpenSpaces
 
-    if (difficulty === "easy") {
-        const adjRand =
-            1 - rand * boardComplexity * EASY_SUB_OPTIMAL_CHOICE_VELOCITY
+    //select constant based upon difficulty
+    let difficultyAdjustment = EASY_SUB_OPTIMAL_CHOICE_VELOCITY
+    if (difficulty === "medium")
+        difficultyAdjustment = MEDIUM_SUB_OPTIMAL_CHOICE_VELOCITY
+    if (difficulty === "hard")
+        difficultyAdjustment = HARD_SUB_OPTIMAL_CHOICE_VELOCITY
 
-        if (adjRand < 0.25) {
-            chosenMove = getLastMove(board, best3Moves[2][0]) //third best move
-        } else if (adjRand < 0.5) {
-            chosenMove = getLastMove(board, best3Moves[1][0]) //second best
-        } else {
-            chosenMove = getLastMove(board, best3Moves[0][0]) //best
-        }
-    } else if (difficulty === "medium") {
-        const adjRand =
-            1 - rand * boardComplexity * MEDIUM_SUB_OPTIMAL_CHOICE_VELOCITY
+    const randIndex = chooseIndex(
+        weights,
+        boardComplexity,
+        difficultyAdjustment
+    )
 
-        if (adjRand < 0.1) {
-            chosenMove = getLastMove(board, best3Moves[2][0])
-        } else if (adjRand < 0.25) {
-            chosenMove = getLastMove(board, best3Moves[1][0])
-        } else {
-            chosenMove = getLastMove(board, best3Moves[0][0])
-        }
-    } else if (difficulty === "hard") {
-        const adjRand =
-            1 - rand * boardComplexity * HARD_SUB_OPTIMAL_CHOICE_VELOCITY
-
-        if (adjRand < 0.05) {
-            chosenMove = getLastMove(board, best3Moves[2][0])
-        } else if (adjRand < 0.1) {
-            chosenMove = getLastMove(board, best3Moves[1][0])
-        } else {
-            chosenMove = getLastMove(board, best3Moves[0][0])
-        }
-    } else {
-        throw Error("Invalid difficulty setting")
-    }
+    chosenMove = getLastMove(board, bestMoves[randIndex][0])
 
     return chosenMove
+}
+
+//picks a random index from array of weights
+//also takes into account the board complexity,
+//which increases as the game goes along,
+//and a constant adjusting how quickly sub optimal moves
+//will tend to be chosen
+//index ranges from 0 inclusive to weights.length exclusive
+//basic algorithm from:
+//https://stackoverflow.com/a/8435261/20048656
+function chooseIndex(
+    weights: number[],
+    boardComplexity: number,
+    subOptimalAdj: number
+) {
+    let sum = 0
+    let adjustedRandNum = Math.random() * boardComplexity * subOptimalAdj
+    adjustedRandNum = adjustedRandNum > 1 ? 1 : adjustedRandNum
+
+    for (let i = 0; i < weights.length; i += 1) {
+        sum += weights[i]
+        if (adjustedRandNum <= sum) {
+            return i
+        }
+    }
+
+    return 0
 }
 
 //function returns max score it can find assuming other player is also
