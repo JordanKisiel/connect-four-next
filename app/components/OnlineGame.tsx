@@ -209,7 +209,7 @@ export default function OnlineGame({ gameID }: Props) {
                     </Button>
                 </Link>
                 <Image
-                    className="absolute left-1/2 -translate-x-1/2"
+                    className="absolute left-1/2 -translate-x-1/2 sm:scale-50 md:scale-100"
                     src={logo}
                     alt="logo"
                 />
@@ -245,34 +245,36 @@ export default function OnlineGame({ gameID }: Props) {
             />
 
             <div className="w-full flex-col items-center md:w-[90%] lg:w-[80%]">
-                {stage !== "over" && (
-                    <>
-                        <div className="mb-12 flex w-full items-center justify-between sm:mb-9 md:mb-8 lg:mb-6">
-                            <ColumnSelectButton
-                                isPlayersTurn={isPlayersTurn}
-                                isPlayer1={isPlayer1}
-                                isLeft={true}
-                                handleColSelect={
-                                    isPlayersTurn
-                                        ? handleColSelect
-                                        : () => {
-                                              /* do nothing */
-                                          }
-                                }
-                            />
-                            <ColumnSelectButton
-                                isPlayersTurn={isPlayersTurn}
-                                isPlayer1={isPlayer1}
-                                isLeft={false}
-                                handleColSelect={
-                                    isPlayersTurn
-                                        ? handleColSelect
-                                        : () => {
-                                              /* do nothing */
-                                          }
-                                }
-                            />
-                        </div>
+                <>
+                    <div className="mb-12 flex w-full items-center justify-between sm:mb-9 md:mb-8 lg:mb-6">
+                        <ColumnSelectButton
+                            isPlayersTurn={isPlayersTurn}
+                            isPlayer1={isPlayer1}
+                            isLeft={true}
+                            isVisible={stage !== "over"}
+                            handleColSelect={
+                                isPlayersTurn
+                                    ? handleColSelect
+                                    : () => {
+                                          /* do nothing */
+                                      }
+                            }
+                        />
+                        <ColumnSelectButton
+                            isPlayersTurn={isPlayersTurn}
+                            isPlayer1={isPlayer1}
+                            isLeft={false}
+                            isVisible={stage !== "over"}
+                            handleColSelect={
+                                isPlayersTurn
+                                    ? handleColSelect
+                                    : () => {
+                                          /* do nothing */
+                                      }
+                            }
+                        />
+                    </div>
+                    <div className={`${stage !== "over" ? "" : "invisible"}`}>
                         <MenuButton
                             bgColor={
                                 isPlayer1
@@ -299,8 +301,8 @@ export default function OnlineGame({ gameID }: Props) {
                         >
                             {isPlayersTurn ? "Drop!" : "Other Player's Turn"}
                         </MenuButton>
-                    </>
-                )}
+                    </div>
+                </>
             </div>
 
             {stage === "waiting" && (

@@ -191,3 +191,9 @@ export function getNumOpenCols(board: Board): number {
 
     return openCols
 }
+
+//return a boolean indicating if the given column has
+//an empty space availabe in the given board position
+export function isColOpen(board: Board, selectedCol: number) {
+    return board[selectedCol].some((slot) => slot === null)
+}

@@ -2,6 +2,7 @@ import {
     getEmptyBoard,
     getWinningSpaces,
     isBoardFull,
+    isColOpen,
 } from "../lib/connect4-utilities.ts"
 import { Board } from "../types.ts"
 import { Server } from "socket.io"
@@ -93,8 +94,11 @@ export class Game {
         })
 
         player.playerSocket.on("disc_dropped", ({ selectedCol, isPlayer1 }) => {
-            console.log("dropping disc")
-            this.dropDisc(selectedCol, isPlayer1)
+            //only drop disc if there's an empty space in the column
+            if (isColOpen(this.board, selectedCol)) {
+                console.log("dropping disc")
+                this.dropDisc(selectedCol, isPlayer1)
+            }
         })
 
         player.playerSocket.on("player_left_game", () => {

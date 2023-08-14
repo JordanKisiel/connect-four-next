@@ -68,16 +68,16 @@ export default function ResultDisplay({
             py-5
             text-neutral-900
             shadow-2xl
-            md:top-[47%]
+            md:top-[64%]
             md:w-[70%]
-            lg:top-[67%]
-            lg:w-[75%]
+            lg:top-[68%]
+            lg:w-[64%]
             "
         >
-            <span className="text-center text-base font-bold uppercase md:text-2xl">
+            <span className="text-center text-base font-bold uppercase md:text-2xl lg:text-xl">
                 {player}
             </span>
-            <span className="mb-1.5 text-center text-6xl font-bold uppercase md:mb-5 md:text-7xl">
+            <span className="mb-1.5 text-center text-4xl font-bold uppercase md:mb-5 md:text-7xl lg:text-3xl">
                 {resultText}
             </span>
             <Button

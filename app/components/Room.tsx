@@ -45,7 +45,7 @@ export default function Room({
                 lg:pt-2
                 "
         >
-            <h2 className="mb-3 text-2xl font-bold uppercase sm:text-xl lg:mb-2">{`Room ${roomID}`}</h2>
+            <h2 className="mb-3 text-2xl font-bold uppercase sm:text-xl lg:mb-2">{`${roomID}`}</h2>
             <div className="flex w-full justify-between gap-6 lg:justify-around lg:gap-8">
                 <Link
                     className="w-full"
