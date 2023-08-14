@@ -11,6 +11,7 @@ type Props = {
     isPlayer1: boolean
     isLeft: boolean
     handleColSelect: Function
+    isVisible: boolean
 }
 
 export default function ColumnSelectButton({
@@ -18,7 +19,10 @@ export default function ColumnSelectButton({
     isPlayer1,
     isLeft,
     handleColSelect,
+    isVisible,
 }: Props) {
+    const visibility = isVisible ? "" : "invisible"
+
     let leftOption = ""
     let rightOption = ""
 
@@ -37,7 +41,7 @@ export default function ColumnSelectButton({
 
     return (
         <button
-            className="flex justify-center"
+            className={`flex justify-center ${visibility}`}
             onClick={() => handleColSelect(isLeft)}
         >
             <Image

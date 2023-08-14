@@ -268,34 +268,36 @@ export default function Game({ difficulty }: Props) {
             />
 
             <div className="w-full flex-col items-center md:w-[90%] lg:w-[80%]">
-                {!isGameOver && (
-                    <>
-                        <div className="mb-12 flex w-full items-center justify-between sm:mb-9 sm:scale-[0.9] md:mb-8 md:scale-100 lg:mb-6">
-                            <ColumnSelectButton
-                                isPlayersTurn={isPlayer1Turn}
-                                isPlayer1={true}
-                                isLeft={true}
-                                handleColSelect={
-                                    isPlayer1Turn
-                                        ? handleColSelect
-                                        : () => {
-                                              /* do nothing */
-                                          }
-                                }
-                            />
-                            <ColumnSelectButton
-                                isPlayersTurn={isPlayer1Turn}
-                                isPlayer1={true}
-                                isLeft={false}
-                                handleColSelect={
-                                    isPlayer1Turn
-                                        ? handleColSelect
-                                        : () => {
-                                              /* do nothing */
-                                          }
-                                }
-                            />
-                        </div>
+                <>
+                    <div className="mb-12 flex w-full items-center justify-between sm:mb-9 sm:scale-[0.9] md:mb-8 md:scale-100 lg:mb-6">
+                        <ColumnSelectButton
+                            isPlayersTurn={isPlayer1Turn}
+                            isPlayer1={true}
+                            isLeft={true}
+                            isVisible={!isGameOver}
+                            handleColSelect={
+                                isPlayer1Turn
+                                    ? handleColSelect
+                                    : () => {
+                                          /* do nothing */
+                                      }
+                            }
+                        />
+                        <ColumnSelectButton
+                            isPlayersTurn={isPlayer1Turn}
+                            isPlayer1={true}
+                            isLeft={false}
+                            isVisible={!isGameOver}
+                            handleColSelect={
+                                isPlayer1Turn
+                                    ? handleColSelect
+                                    : () => {
+                                          /* do nothing */
+                                      }
+                            }
+                        />
+                    </div>
+                    <div className={`${!isGameOver ? "" : "invisible"}`}>
                         <MenuButton
                             bgColor={
                                 isPlayer1Turn ? "bg-red-300" : "bg-neutral-300"
@@ -317,8 +319,8 @@ export default function Game({ difficulty }: Props) {
                         >
                             {isPlayer1Turn ? "Drop!" : "CPU Move"}
                         </MenuButton>
-                    </>
-                )}
+                    </div>
+                </>
             </div>
 
             {isGameOver && (

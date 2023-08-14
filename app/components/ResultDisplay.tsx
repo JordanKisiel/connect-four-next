@@ -27,7 +27,7 @@ export default function ResultDisplay({
         <div
             className="
             absolute
-            top-[65%]
+            top-[62%]
             flex
             w-5/6
             flex-col
@@ -42,10 +42,10 @@ export default function ResultDisplay({
             py-5
             text-neutral-900
             shadow-2xl
-            md:top-[47%]
-            md:w-[70%]
-            lg:top-[67%]
-            lg:w-[75%]
+            md:top-[68%]
+            md:w-[60%]
+            lg:top-[64%]
+            lg:w-[70%]
             "
         >
             <span className="text-center text-base font-bold uppercase md:text-2xl">
