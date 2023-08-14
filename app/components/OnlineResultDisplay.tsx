@@ -77,7 +77,7 @@ export default function ResultDisplay({
             <span className="text-center text-base font-bold uppercase md:text-2xl lg:text-xl">
                 {player}
             </span>
-            <span className="mb-1.5 text-center text-4xl font-bold uppercase md:mb-5 md:text-7xl lg:text-3xl">
+            <span className="mb-1.5 text-center text-4xl font-bold uppercase md:mb-5 md:text-5xl lg:text-3xl">
                 {resultText}
             </span>
             <Button
