@@ -1,5 +1,8 @@
 import { Board } from "../types.ts"
 
+export const BOARD_ROWS = 6
+export const BOARD_COLS = 7
+
 //if a winning line is found
 //returns array of coordinates of the 4 winning spaces
 //otherwise returns an empty array
