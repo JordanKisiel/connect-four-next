@@ -7,7 +7,7 @@ import {
 import { Board } from "../types.ts"
 import { Server } from "socket.io"
 import { Player } from "./player.ts"
-import { Timer } from "./timer.ts"
+import { Timer } from "./game/timer.ts"
 
 const BOARD_ROWS = 6
 const BOARD_COLS = 7
@@ -133,8 +133,13 @@ export class Game {
         const bothPlayersReady = this.player1?.isReady && this.player2?.isReady
 
         if (bothSlotsFilled && bothPlayersReady) {
-            this.stage = "in_progress"
-            this.turnTimer.start()
+            //only put game in progress and restart timer if
+            //game is not already running
+            //this accounts for a player rejoining
+            if (this.stage !== "in_progress") {
+                this.stage = "in_progress"
+                this.turnTimer.start()
+            }
         } else {
             this.stage = "waiting"
             this.turnTimer.reset()
@@ -182,17 +187,18 @@ export class Game {
         this.turnTimer.reset()
     }
 
-    //inform the clients of the change in players
+    //inform the clients of the change in game data
     updateGame() {
         //if there are no players, reset the game
         if (this.player1 === null && this.player2 === null) {
             this.resetGame()
         }
 
-        //when the game ends, unready players
+        //when the game ends, unready players and reset game
         if (this.stage === "over") {
             if (this.player1) this.player1.isReady = false
             if (this.player2) this.player2.isReady = false
+            this.resetGame()
         }
 
         const gameState = {

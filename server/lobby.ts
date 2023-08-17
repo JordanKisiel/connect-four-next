@@ -78,8 +78,6 @@ export class Lobby {
 
             if (game.player1?.isReady && game.player2?.isReady) {
                 game.startNewGame()
-            } else if (game.player1?.isReady || game.player2?.isReady) {
-                game.resetGame()
             }
 
             game.updateGame()
