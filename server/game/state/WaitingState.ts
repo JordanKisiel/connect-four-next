@@ -19,82 +19,31 @@ export class WaitingState implements GameState {
     }
 
     addPlayer(player: Player): void {
-        console.log(`${player.playerID} joining game`)
-        player.playerSocket.join(this.gameContext.roomID)
-
-        //playerSlot of true denotes player1 slot
-        if (player.isPlayer1) {
-            this.gameContext.player1 = player
-        } else {
-            this.gameContext.player2 = player
-        }
-
-        player.playerSocket.on("player_joined", () => {
-            console.log("player joined")
-            this.gameContext.updateClients()
-        })
-
-        player.playerSocket.on("disc_dropped", ({ selectedCol, isPlayer1 }) => {
-            //only drop disc if there's an empty space in the column
-            if (isColOpen(this.gameContext.board, selectedCol)) {
-                console.log("dropping disc")
-                this.gameContext.dropDisc(selectedCol, isPlayer1)
-            }
-        })
-
-        player.playerSocket.on("player_left_game", () => {
-            this.gameContext.removePlayer(player)
-
-            if (
-                this.gameContext.player1 === null &&
-                this.gameContext.player2 === null
-            ) {
-                this.gameContext.changeState(
-                    new InactiveState(this.gameContext)
-                )
-                this.gameContext.startNewGame()
-            } else {
-                this.gameContext.changeState(new OverState(this.gameContext))
-
-                //remaining player gets put into unready state
-                if (this.gameContext.player1) {
-                    this.gameContext.player1.isReady = false
-                } else if (this.gameContext.player2) {
-                    this.gameContext.player2.isReady = false
-                }
-            }
-
-            this.gameContext.turnTimer.reset()
-
-            this.gameContext.updateClients()
-        })
-
-        const bothPlayersReady =
-            this.gameContext.player1?.isReady &&
-            this.gameContext.player2?.isReady
-
-        if (bothPlayersReady) {
-            this.gameContext.changeState(new InProgressState(this.gameContext))
-            this.gameContext.turnTimer.start()
-        } else {
-            this.gameContext.turnTimer.reset()
-        }
-
-        this.gameContext.changeState(new InProgressState(this.gameContext))
-        this.gameContext.updateClients()
+        this.gameContext.startNewGame(false)
     }
 
     removePlayer(player: Player): void {
-        this.gameContext.player1 = null
-        this.gameContext.player2 = null
+        if (player.isPlayer1) {
+            this.gameContext.player1 = null
+        } else {
+            this.gameContext.player2 = null
+        }
+
+        console.log(`player1: ${this.gameContext.player1}`)
+        console.log(`player2: ${this.gameContext.player2}`)
 
         player.playerSocket.leave(this.gameContext.roomID)
         player.playerSocket.removeAllListeners("player_joined")
         player.playerSocket.removeAllListeners("disc_dropped")
         player.playerSocket.removeAllListeners("player_left_game")
 
-        this.gameContext.changeState(new InactiveState(this.gameContext))
-        this.gameContext.startNewGame()
+        if (
+            this.gameContext.player1 === null &&
+            this.gameContext.player2 === null
+        ) {
+            this.gameContext.changeState(new InactiveState(this.gameContext))
+            this.gameContext.startNewGame(false)
+        }
 
         this.gameContext.updateClients()
     }
@@ -103,14 +52,21 @@ export class WaitingState implements GameState {
         //Do nothing
     }
 
-    startNewGame(): void {
+    startNewGame(isSeries: boolean): void {
         this.gameContext.board = getEmptyBoard(BOARD_ROWS, BOARD_COLS)
-        //alternate who goes first if starting from a waiting state
-        this.gameContext.isPlayer1First = !this.gameContext.isPlayer1First
+        //alternate who goes first if in a series of games
+        if (isSeries) {
+            this.gameContext.isPlayer1First = !this.gameContext.isPlayer1First
+        }
         this.gameContext.isPlayer1Turn = this.gameContext.isPlayer1First
 
-        this.gameContext.changeState(new InProgressState(this.gameContext))
-        this.gameContext.turnTimer.start()
+        if (
+            this.gameContext.player1?.isReady &&
+            this.gameContext.player2?.isReady
+        ) {
+            this.gameContext.changeState(new InProgressState(this.gameContext))
+            this.gameContext.turnTimer.start()
+        }
     }
 
     toString(): string {

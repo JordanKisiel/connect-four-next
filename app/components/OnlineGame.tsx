@@ -20,7 +20,7 @@ import OnlineResultDisplay from "./OnlineResultDisplay"
 import Modal from "./Modal"
 import TurnTimer from "./TurnTimer"
 
-type GameStage = "waiting" | "in_progress" | "over"
+type GameState = "inactive" | "waiting" | "in_progress" | "over"
 
 type PlayerSlots = {
     playerSlot1: {
@@ -49,9 +49,12 @@ export default function OnlineGame({ gameID }: Props) {
     const CENTER_COL = 3
 
     const PLAYER_TURN_DURATION = 90 //in seconds
+    //how much time to subtract from server time to account for latency
+    //used on a reconnection to game
+    const LATENCY_FORGIVENESS = 2 // in seconds
 
-    //indication of which stage of the game's lifecycle it's in
-    const [stage, setStage] = useState<GameStage>("waiting")
+    //indication of which overall state the game is in
+    const [state, setState] = useState<GameState>("inactive")
 
     //board states initializes with null for empty spaces
     //later, spaces filled with true will represent the discs of the first player
@@ -104,7 +107,7 @@ export default function OnlineGame({ gameID }: Props) {
         socket.on("game_updated", (data) => {
             const game = data
 
-            setStage(game.stage)
+            setState(game.gameState)
             setRemainingTime(game.remainingTurnTime)
             setPlayerSlots({
                 playerSlot1: game.player1,
@@ -118,6 +121,11 @@ export default function OnlineGame({ gameID }: Props) {
             setBoard(game.board)
             setIsPlayer1Turn(game.isPlayer1Turn)
             setIsPlayer1First(game.isPlayer1First)
+
+            //reset selected col to center after game update
+            setSelectedCol(CENTER_COL)
+
+            console.log(game)
         })
 
         socket.emit("player_joined")
@@ -142,7 +150,7 @@ export default function OnlineGame({ gameID }: Props) {
             isPlayer1: isFirstPlayerDisc,
         })
 
-        setSelectedCol(CENTER_COL)
+        //setSelectedCol(CENTER_COL)
     }
 
     function handlePlayerLeftGame(gameID: number, isPlayer1: boolean) {
@@ -179,7 +187,7 @@ export default function OnlineGame({ gameID }: Props) {
                 px-2 
                 pt-16
                 ${getBGToUse(
-                    stage === "over"
+                    state === "over"
                         ? getWinningSpaces(board).length !== 0
                         : false,
                     isPlayer1Turn
@@ -228,11 +236,11 @@ export default function OnlineGame({ gameID }: Props) {
             </div>
 
             <TurnTimer
-                gameStage={stage}
+                gameState={state}
                 paddingX="px-6"
                 isPlayer1={isPlayer1}
                 isPlayersTurn={isPlayersTurn}
-                startTime={90}
+                startTime={remainingTime - LATENCY_FORGIVENESS}
             />
 
             <Board
@@ -241,7 +249,7 @@ export default function OnlineGame({ gameID }: Props) {
                 board={board}
                 isPlayer1Turn={isPlayer1Turn}
                 isPlayersTurn={isPlayersTurn}
-                winningSpaces={stage === "over" ? getWinningSpaces(board) : []}
+                winningSpaces={state === "over" ? getWinningSpaces(board) : []}
             />
 
             <div className="w-full flex-col items-center md:w-[90%] lg:w-[80%]">
@@ -251,7 +259,7 @@ export default function OnlineGame({ gameID }: Props) {
                             isPlayersTurn={isPlayersTurn}
                             isPlayer1={isPlayer1}
                             isLeft={true}
-                            isVisible={stage !== "over"}
+                            isVisible={state !== "over"}
                             handleColSelect={
                                 isPlayersTurn
                                     ? handleColSelect
@@ -264,7 +272,7 @@ export default function OnlineGame({ gameID }: Props) {
                             isPlayersTurn={isPlayersTurn}
                             isPlayer1={isPlayer1}
                             isLeft={false}
-                            isVisible={stage !== "over"}
+                            isVisible={state !== "over"}
                             handleColSelect={
                                 isPlayersTurn
                                     ? handleColSelect
@@ -274,7 +282,7 @@ export default function OnlineGame({ gameID }: Props) {
                             }
                         />
                     </div>
-                    <div className={`${stage !== "over" ? "" : "invisible"}`}>
+                    <div className={`${state !== "over" ? "" : "invisible"}`}>
                         <MenuButton
                             bgColor={
                                 isPlayer1
@@ -305,7 +313,7 @@ export default function OnlineGame({ gameID }: Props) {
                 </>
             </div>
 
-            {stage === "waiting" && (
+            {state === "waiting" && (
                 <Modal
                     title={
                         isPlayerReady
@@ -338,7 +346,7 @@ export default function OnlineGame({ gameID }: Props) {
                 </Modal>
             )}
 
-            {stage === "over" && (
+            {state === "over" && (
                 <OnlineResultDisplay
                     isPlayersTurn={isPlayersTurn}
                     isWinner={getWinningSpaces(board).length > 0}

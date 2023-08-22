@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 
 type Props = {
-    gameStage: "in_progress" | "waiting" | "over"
+    gameState: "inactive" | "in_progress" | "waiting" | "over"
     paddingX: string
     isPlayer1: boolean
     isPlayersTurn: boolean
@@ -11,7 +11,7 @@ type Props = {
 }
 
 export default function TurnTimer({
-    gameStage,
+    gameState,
     paddingX,
     isPlayer1,
     isPlayersTurn,
@@ -46,7 +46,7 @@ export default function TurnTimer({
 
         let interval: NodeJS.Timer
 
-        if (gameStage === "in_progress") {
+        if (gameState === "in_progress") {
             interval = setInterval(() => {
                 setRemainingTime((prevTime) => {
                     return prevTime > 0 ? prevTime - 1 : 0
@@ -57,12 +57,12 @@ export default function TurnTimer({
         return () => {
             clearInterval(interval)
         }
-    }, [isPlayersTurn, gameStage])
+    }, [isPlayersTurn, gameState])
 
     return (
         <div
             className={`
-                ${gameStage !== "in_progress" ? "invisible" : ""}
+                ${gameState !== "in_progress" ? "invisible" : ""}
                 ${bgColor} 
                 ${textColor} 
                 rounded-full 

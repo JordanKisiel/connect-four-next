@@ -1,11 +1,13 @@
-import { Game } from "./game.ts"
+import { GameContext } from "./game/GameContext.ts"
+import { OverState } from "./game/state/OverState.ts"
+import { WaitingState } from "./game/state/WaitingState.ts"
 import { Player } from "./player.ts"
 import { Server, Socket } from "socket.io"
 
 export class Lobby {
     numRooms: number
     server: Server
-    games: Game[]
+    games: GameContext[]
 
     constructor(numRooms: number, server: Server) {
         this.numRooms = numRooms
@@ -19,7 +21,7 @@ export class Lobby {
         //      this would avoid certain issues with undefined references in other parts of the code
         for (let i = 1; i < numRooms + 1; i += 1) {
             const roomID = `Room ${i}`
-            const game = new Game(roomID, this.server)
+            const game = new GameContext(roomID, this.server)
             this.games[i] = game
         }
     }
@@ -68,19 +70,20 @@ export class Lobby {
 
             if (isPlayer1 && game.player1 !== null) {
                 game.player1.isReady = true
-                game.stage = "waiting"
+                game.changeState(new WaitingState(game))
             }
 
             if (!isPlayer1 && game.player2 !== null) {
                 game.player2.isReady = true
-                game.stage = "waiting"
+                game.changeState(new WaitingState(game))
             }
 
             if (game.player1?.isReady && game.player2?.isReady) {
-                game.startNewGame()
+                //continuing a series of games
+                game.startNewGame(true)
             }
 
-            game.updateGame()
+            game.updateClients()
         })
 
         socket.on("cancelled_rejoin", ({ gameID, playerID }) => {
@@ -121,8 +124,8 @@ export class Lobby {
             if (game.player2) game.removePlayer(game.player2)
         }
 
-        game.stage = "over"
-        game.updateGame()
+        game.changeState(new OverState(game))
+        game.updateClients()
     }
 
     updateLobby() {

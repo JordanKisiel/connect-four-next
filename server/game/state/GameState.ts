@@ -6,6 +6,6 @@ export interface GameState {
     addPlayer(player: Player): void
     removePlayer(player: Player): void
     dropDisc(colIndex: number, isFirstPlayerDisc: boolean): void
-    startNewGame(): void
+    startNewGame(isSeries: boolean): void
     toString(): string
 }

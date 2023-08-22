@@ -31,7 +31,8 @@ export class InProgressState implements GameState {
         player.playerSocket.removeAllListeners("disc_dropped")
         player.playerSocket.removeAllListeners("player_left_game")
 
-        this.gameContext.changeState(new WaitingState(this.gameContext))
+        this.gameContext.turnTimer.reset()
+        this.gameContext.changeState(new OverState(this.gameContext))
 
         this.gameContext.updateClients()
     }
@@ -59,9 +60,16 @@ export class InProgressState implements GameState {
         }
 
         //detect if there is a win
-        const isWin = getWinningSpaces(board).length !== 0
+        const isWin = getWinningSpaces(this.gameContext.board).length !== 0
         //if there is a win or draw, the game is over
-        if (isWin || isBoardFull(board)) {
+        if (isWin || isBoardFull(this.gameContext.board)) {
+            //unready players
+            if (this.gameContext.player1) {
+                this.gameContext.player1.isReady = false
+            }
+            if (this.gameContext.player2) {
+                this.gameContext.player2.isReady = false
+            }
             this.gameContext.changeState(new OverState(this.gameContext))
             this.gameContext.turnTimer.reset()
         } else {
@@ -74,7 +82,7 @@ export class InProgressState implements GameState {
         this.gameContext.updateClients()
     }
 
-    startNewGame(): void {
+    startNewGame(isSeries: boolean): void {
         //Do nothing
     }
 

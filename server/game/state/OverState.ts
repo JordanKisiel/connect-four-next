@@ -1,5 +1,6 @@
 import { GameContext } from "../GameContext.ts"
 import { GameState } from "./GameState.ts"
+import { InactiveState } from "./InactiveState.ts"
 import { WaitingState } from "./WaitingState.ts"
 import { Player } from "@/player.ts"
 
@@ -26,8 +27,12 @@ export class OverState implements GameState {
         player.playerSocket.removeAllListeners("disc_dropped")
         player.playerSocket.removeAllListeners("player_left_game")
 
-        this.gameContext.changeState(new WaitingState(this.gameContext))
-        this.gameContext.startNewGame()
+        if (
+            this.gameContext.player1 === null &&
+            this.gameContext.player2 === null
+        ) {
+            this.gameContext.changeState(new InactiveState(this.gameContext))
+        }
 
         this.gameContext.updateClients()
     }
@@ -36,7 +41,7 @@ export class OverState implements GameState {
         //Do nothing
     }
 
-    startNewGame(): void {
+    startNewGame(isSeries: boolean): void {
         //Do nothing
     }
 
