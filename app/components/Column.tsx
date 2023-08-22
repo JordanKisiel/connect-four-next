@@ -1,6 +1,7 @@
 import Space from "./Space"
 import ColumnIndicator from "./ColumnIndicator"
 import { Board } from "@/types"
+import { useEffect, useRef } from "react"
 
 type Props = {
     board: Board
@@ -19,22 +20,31 @@ export default function Column({
     isPlayersTurn,
     selectedCol,
 }: Props) {
+    //get ref to column div to access position
+    const columnRef = useRef<HTMLDivElement | null>(null)
+    const columnYPos = columnRef?.current?.getBoundingClientRect().top || 0
+
     const spaces = board[rowIndex]
         .map((value, index) => {
             return (
                 <Space
                     key={index}
                     value={value}
+                    board={board}
                     rowIndex={rowIndex}
                     colIndex={index}
                     winningSpaces={winningSpaces}
+                    columnTop={columnYPos}
                 />
             )
         })
         .reverse() //reverse so that column renders bottom up
 
     return (
-        <div className="mt-[8%] h-[85%]">
+        <div
+            ref={columnRef}
+            className="mt-[8%] h-[85%]"
+        >
             {
                 <ColumnIndicator
                     isPlayer1Turn={isPlayer1Turn}

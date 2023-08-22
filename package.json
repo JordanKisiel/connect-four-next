@@ -16,6 +16,7 @@
         "bufferutil": "^4.0.7",
         "eslint": "8.43.0",
         "eslint-config-next": "13.4.6",
+        "gsap": "^3.12.2",
         "next": "^13.4.8",
         "postcss": "8.4.24",
         "react": "18.2.0",

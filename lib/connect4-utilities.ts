@@ -144,6 +144,8 @@ export function isBoardEmpty(board: Board): boolean {
 
 //compares two consecutive board positions after a move
 //the column with non-equal number of discs is the last move that occured
+//will NOT work properly with two non-consecutive positons
+//TODO: guard against non-consecutive positions
 export function getLastMove(prevBoard: Board, currBoard: Board) {
     let lastMove = 0
     for (let i = 0; i < prevBoard.length; i++) {
@@ -199,4 +201,17 @@ export function getNumOpenCols(board: Board): number {
 //an empty space availabe in the given board position
 export function isColOpen(board: Board, selectedCol: number) {
     return board[selectedCol].some((slot) => slot === null)
+}
+
+//return the number of discs already played in a given column
+export function getDiscsInColumn(board: Board, colIndex: number) {
+    let numDiscs = 0
+
+    for (let i = 0; i < board[colIndex].length; i += 1) {
+        if (board[colIndex][i] !== null) {
+            numDiscs += 1
+        }
+    }
+
+    return numDiscs
 }
