@@ -21,6 +21,7 @@ type Props = {
     rowIndex: number
     colIndex: number
     columnTop: number
+    columnBottom: number
 }
 
 export default function Space({
@@ -30,6 +31,7 @@ export default function Space({
     rowIndex,
     colIndex,
     columnTop,
+    columnBottom,
 }: Props) {
     //empty spaces are represented by transparent image files
     //so that the transition from default image to disc image is not seen
@@ -41,7 +43,7 @@ export default function Space({
 
     //adjustment used for calculating the height to drop a disc from
     //determined visually through trial and error
-    const DROP_HEIGHT_VISUAL_ADJUSTMENT = 40
+    const DROP_HEIGHT_VISUAL_ADJUSTMENT = 5
 
     //custom drop ease path information
     const CUSTOM_DROP_EASE = `M0,0 C0.456,0 0.506,0.963 0.514,1 0.522,
@@ -50,15 +52,19 @@ export default function Space({
         0.966 1,1 1,1 `
 
     useEffect(() => {
+        const discs = getDiscsInColumn(board, rowIndex)
+        const height = discRef.current?.clientHeight || 0
+        const dropPoint =
+            columnTop -
+            columnBottom +
+            discs * height -
+            DROP_HEIGHT_VISUAL_ADJUSTMENT
+
+        console.log(`Drop point: ${dropPoint}`)
+
         if (value !== null) {
-            console.log(`column index: ${rowIndex}`)
-            console.log(getDiscsInColumn(board, rowIndex))
             gsap.from(discRef.current, {
-                y:
-                    -columnTop +
-                    (getDiscsInColumn(board, rowIndex) - 1) *
-                        (discRef.current?.clientHeight || 0) -
-                    DROP_HEIGHT_VISUAL_ADJUSTMENT,
+                y: dropPoint,
                 duration: 0.6,
                 ease: CustomEase.create("custom", CUSTOM_DROP_EASE),
             })

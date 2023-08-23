@@ -22,7 +22,8 @@ export default function Column({
 }: Props) {
     //get ref to column div to access position
     const columnRef = useRef<HTMLDivElement | null>(null)
-    const columnYPos = columnRef?.current?.getBoundingClientRect().top || 0
+    const columnTop = columnRef?.current?.getBoundingClientRect().top || 0
+    const columnBottom = columnRef?.current?.getBoundingClientRect().bottom || 0
 
     const spaces = board[rowIndex]
         .map((value, index) => {
@@ -34,7 +35,8 @@ export default function Column({
                     rowIndex={rowIndex}
                     colIndex={index}
                     winningSpaces={winningSpaces}
-                    columnTop={columnYPos}
+                    columnTop={columnTop}
+                    columnBottom={columnBottom}
                 />
             )
         })
