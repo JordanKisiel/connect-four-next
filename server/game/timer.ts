@@ -12,14 +12,12 @@ export class Timer {
     }
 
     start() {
-        console.log("TURN TIMER STARTED!")
         this.reset()
         this.interval = setInterval(() => {
             if (this.remainingTime > 0) {
                 console.log(`Remaining time: ${this.remainingTime}`)
                 this.remainingTime -= 1
             } else {
-                console.log("TURN TIMER RAN OUT!")
                 this.callbackFunction()
                 clearInterval(this.interval)
             }

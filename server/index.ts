@@ -28,6 +28,9 @@ io.on("connection", (socket) => {
 
     socket.on("disconnect", async () => {
         console.log(`User disconnected: ${clientID}`)
+
+        //start disconnect timer for this user
+        lobby.startDisconnectTimer(clientID)
     })
 })
 

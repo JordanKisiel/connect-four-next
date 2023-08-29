@@ -2,17 +2,25 @@ import { GameContext } from "./game/GameContext.ts"
 import { OverState } from "./game/state/OverState.ts"
 import { WaitingState } from "./game/state/WaitingState.ts"
 import { Player } from "./player.ts"
+import { Timer } from "./game/timer.ts"
 import { Server, Socket } from "socket.io"
+
+const DISCONNECT_TIMEOUT = 120 //in seconds
 
 export class Lobby {
     numRooms: number
     server: Server
     games: GameContext[]
+    disconnectTimers: {
+        playerID: string
+        timer: Timer
+    }[]
 
     constructor(numRooms: number, server: Server) {
         this.numRooms = numRooms
         this.server = server
         this.games = []
+        this.disconnectTimers = []
 
         //create one more game so that games can referenced from index 1
         //this makes it easier to interface with the frontend
@@ -49,10 +57,7 @@ export class Lobby {
         socket.on("select_slot", ({ roomID, isPlayer1 }) => {
             const player = new Player(socket, isPlayer1, true)
 
-            //remove player from all games (which removes them from slots as well)
-            for (let i = 1; i < this.games.length; i += 1) {
-                this.games[i].removePlayer(player)
-            }
+            this.removeUserFromAllGames(player.playerSocket.handshake.auth.id)
 
             //add player to selected game and slot
             //TODO: change to use gameID
@@ -90,6 +95,26 @@ export class Lobby {
             this.cancelRejoin(gameID, playerID)
         })
 
+        //create a disconnect timer for the user
+        //if the user disconnects, after 2 minutes they'll timeout and be removed
+        //from all games
+        const disconnectTimer = new Timer(DISCONNECT_TIMEOUT, () => {
+            this.removeUserFromAllGames(socket.handshake.auth.id)
+            //also remove this timer object from array of disconnect timers
+            //it's no longer needed (and we don't want to cause a memory leak)
+            this.disconnectTimers = this.disconnectTimers.filter((timer) => {
+                return socket.handshake.auth.id !== timer.playerID
+            })
+
+            console.log(this.disconnectTimers)
+        })
+
+        this.disconnectTimers.push({
+            playerID: socket.handshake.auth.id,
+            timer: disconnectTimer,
+        })
+
+        this.stopDisconnectTimer(socket.handshake.auth.id)
         this.attemptRejoin(socket)
     }
 
@@ -116,6 +141,14 @@ export class Lobby {
 
     cancelRejoin(gameID: string, playerID: string) {
         const game = this.games[Number(gameID)]
+        this.removeUserFromGame(Number(gameID), playerID)
+
+        game.changeState(new OverState(game))
+        game.updateClients()
+    }
+
+    removeUserFromGame(gameIndex: number, playerID: string) {
+        const game = this.games[gameIndex]
 
         if (playerID === game.player1?.playerID) {
             if (game.player1) game.removePlayer(game.player1)
@@ -123,9 +156,29 @@ export class Lobby {
         if (playerID === game.player2?.playerID) {
             if (game.player2) game.removePlayer(game.player2)
         }
+    }
 
-        game.changeState(new OverState(game))
-        game.updateClients()
+    removeUserFromAllGames(playerID: string) {
+        //remove player from all games (which removes them from slots as well)
+        for (let i = 1; i < this.games.length; i += 1) {
+            this.removeUserFromGame(i, playerID)
+        }
+    }
+
+    startDisconnectTimer(playerID: string) {
+        const timerObj = this.disconnectTimers.filter((timer) => {
+            return timer.playerID === playerID
+        })[0]
+
+        if (timerObj) timerObj.timer.start()
+    }
+
+    stopDisconnectTimer(playerID: string) {
+        const timerObj = this.disconnectTimers.filter((timer) => {
+            return timer.playerID === playerID
+        })[0]
+
+        if (timerObj) timerObj.timer.reset()
     }
 
     updateLobby() {
