@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef, useLayoutEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import logo from "../public/logo.svg"
@@ -8,6 +8,7 @@ import MenuButton from "./components/MenuButton"
 import Modal from "./components/Modal"
 import { socket } from "@/lib/socket"
 import { getClientID } from "@/lib/clientID"
+import { gsap } from "gsap"
 
 export default function Home() {
     const [rejoinModal, setRejoinModal] = useState({
@@ -52,6 +53,17 @@ export default function Home() {
             socket.off("connect", onConnect)
             socket.off("disconnect", onDisconnect)
         }
+    }, [])
+
+    useLayoutEffect(() => {
+        let context = gsap.context(
+            () => {
+                //animations here
+            } /* optional scoping ref - probably not useful here */
+        )
+
+        //clean up function
+        return () => context.revert()
     }, [])
 
     function handleCancelRejoin() {

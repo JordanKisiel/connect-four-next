@@ -1,6 +1,6 @@
 "use client"
 
-import Link from "next/link"
+import { forwardRef } from "react"
 
 type Props = {
     bgColor: string
@@ -13,18 +13,22 @@ type Props = {
     children: React.ReactNode
 }
 
-export default function MenuButton({
-    bgColor,
-    textColor,
-    textSize,
-    bgImage,
-    textAlign,
-    padding,
-    handler,
-    children,
-}: Props) {
+const MenuButton = forwardRef<HTMLButtonElement, Props>(function MenuButton(
+    {
+        bgColor,
+        textColor,
+        textSize,
+        bgImage,
+        textAlign,
+        padding,
+        handler,
+        children,
+    },
+    ref
+) {
     return (
         <button
+            ref={ref}
             className={`
                 ${bgColor} 
                 ${textColor}
@@ -55,4 +59,4 @@ export default function MenuButton({
             {children}
         </button>
     )
-}
+})
