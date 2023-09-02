@@ -1,5 +1,3 @@
-import MenuButton from "./MenuButton"
-
 type Props = {
     title: string
     children: React.ReactNode

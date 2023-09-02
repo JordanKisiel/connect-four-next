@@ -13,23 +13,24 @@ type Props = {
     children: React.ReactNode
 }
 
-const MenuButton = forwardRef<HTMLButtonElement, Props>(function MenuButton(
-    {
-        bgColor,
-        textColor,
-        textSize,
-        bgImage,
-        textAlign,
-        padding,
-        handler,
-        children,
-    },
-    ref
-) {
-    return (
-        <button
-            ref={ref}
-            className={`
+export const MenuButton = forwardRef<HTMLButtonElement, Props>(
+    function MenuButton(
+        {
+            bgColor,
+            textColor,
+            textSize,
+            bgImage,
+            textAlign,
+            padding,
+            handler,
+            children,
+        },
+        ref
+    ) {
+        return (
+            <button
+                ref={ref}
+                className={`
                 ${bgColor} 
                 ${textColor}
                 ${textSize || "text-2xl"}  
@@ -48,15 +49,16 @@ const MenuButton = forwardRef<HTMLButtonElement, Props>(function MenuButton(
                 shadow-2xl
                 sm:bg-none
                 `}
-            onClick={
-                handler
-                    ? () => handler()
-                    : () => {
-                          /* do nothing */
-                      }
-            }
-        >
-            {children}
-        </button>
-    )
-})
+                onClick={
+                    handler
+                        ? () => handler()
+                        : () => {
+                              /* do nothing */
+                          }
+                }
+            >
+                {children}
+            </button>
+        )
+    }
+)

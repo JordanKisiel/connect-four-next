@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { socket } from "@/lib/socket"
-import MenuButton from "./MenuButton"
+import { MenuButton } from "./MenuButton"
 
 type Props = {
     gameID: number
