@@ -16,6 +16,14 @@ export default function Home() {
         gameID: "",
     })
 
+    //get ref to three menu buttons for animation
+    const vsCpuRef = useRef<HTMLButtonElement | null>(null)
+    const vsPlayerRef = useRef<HTMLButtonElement | null>(null)
+    const rulesRef = useRef<HTMLButtonElement | null>(null)
+
+    //get ref to logo for animation
+    const logoRef = useRef<HTMLImageElement | null>(null)
+
     useEffect(() => {
         //get client id or generate it for the first time
         const id = getClientID()
@@ -56,9 +64,36 @@ export default function Home() {
     }, [])
 
     useLayoutEffect(() => {
+        const buttonRefs = [
+            rulesRef.current,
+            vsPlayerRef.current,
+            vsCpuRef.current,
+        ]
+
         let context = gsap.context(
             () => {
+                const pageTimeline = gsap.timeline()
                 //animations here
+                if (!buttonRefs.includes(null)) {
+                    pageTimeline.from(buttonRefs, {
+                        y: -100,
+                        opacity: 0,
+                        duration: 0.5,
+                        ease: "back.out(1.7)",
+                        stagger: 0.1,
+                    })
+                }
+                pageTimeline.from(
+                    logoRef.current,
+                    {
+                        y: 75,
+                        opacity: 0,
+                        scale: 0.25,
+                        duration: 0.25,
+                        ease: "back.out(1.7)",
+                    },
+                    ">-0.2"
+                )
             } /* optional scoping ref - probably not useful here */
         )
 
@@ -84,6 +119,7 @@ export default function Home() {
                 className="mb-16 md:mb-20"
                 src={logo}
                 alt="logo"
+                ref={logoRef}
             />
             <div className="flex w-full flex-col space-y-6 px-2 lg:max-w-[35rem]">
                 <Link href="/vs-computer/select-difficulty">
@@ -92,6 +128,7 @@ export default function Home() {
                         textColor="text-neutral-100"
                         textAlign="text-left"
                         bgImage="md:bg-[url(../public/player-vs-cpu.svg)]"
+                        ref={vsCpuRef}
                     >
                         Play vs CPU
                     </MenuButton>
@@ -102,6 +139,7 @@ export default function Home() {
                         textColor="text-neutral-900"
                         textAlign="text-left"
                         bgImage="md:bg-[url(../public/player-vs-player.svg)]"
+                        ref={vsPlayerRef}
                     >
                         Player vs Player
                     </MenuButton>
@@ -111,6 +149,7 @@ export default function Home() {
                         bgColor="bg-neutral-100"
                         textColor="text-neutral-900"
                         textAlign="text-left"
+                        ref={rulesRef}
                     >
                         Game Rules
                     </MenuButton>

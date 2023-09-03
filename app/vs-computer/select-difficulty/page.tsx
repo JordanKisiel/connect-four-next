@@ -1,7 +1,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import logo from "@/public/logo.svg"
-import MenuButton from "@/app/components/MenuButton"
+import { MenuButton } from "@/app/components/MenuButton"
 import Button from "@/app/components/Button"
 
 export default function Home() {
