@@ -72,9 +72,11 @@ export default function Home() {
 
         let context = gsap.context(
             () => {
-                const pageTimeline = gsap.timeline()
                 //animations here
+                const pageTimeline = gsap.timeline()
+
                 if (!buttonRefs.includes(null)) {
+                    //probably not necessary
                     pageTimeline.from(buttonRefs, {
                         y: -100,
                         opacity: 0,

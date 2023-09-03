@@ -1,6 +1,10 @@
+"use client"
+
+import { useRef, useLayoutEffect } from "react"
 import checkIcon from "@/public/icon-check.svg"
 import Link from "next/link"
 import Image from "next/image"
+import { gsap } from "gsap"
 
 const ONE_DAY = 86400 //seconds in a day
 
@@ -19,6 +23,39 @@ async function getRulesData() {
 }
 
 export default async function Rules() {
+    //get ref to container div & button for animation
+    const rulesRef = useRef<HTMLDivElement | null>(null)
+    const buttonRef = useRef<HTMLButtonElement | null>(null)
+
+    useLayoutEffect(() => {
+        let context = gsap.context(() => {
+            //animations here
+            const pageTimeline = gsap.timeline()
+
+            pageTimeline.from(rulesRef.current, {
+                y: -100,
+                opacity: 0,
+                duration: 0.5,
+                ease: "back.out(1.7)",
+            })
+
+            pageTimeline.from(
+                buttonRef.current,
+                {
+                    scale: 0,
+                    duration: 0.5,
+                    ease: "back.out(1.7)",
+                },
+                ">-0.2"
+            )
+        })
+
+        //clean up function
+        return () => context.revert()
+    }, [])
+
+    //hooks MUST be used before early returns
+    //this function could theoretically throw an error
     const rules = await getRulesData()
 
     if (rules === undefined) {
@@ -38,6 +75,7 @@ export default async function Rules() {
 
     return (
         <div
+            ref={rulesRef}
             className="
                         relative 
                         flex 
@@ -87,7 +125,7 @@ export default async function Rules() {
                 href="/"
                 className="absolute -bottom-10 flex aspect-square"
             >
-                <button>
+                <button ref={buttonRef}>
                     <Image
                         src={checkIcon}
                         alt="Check icon"
