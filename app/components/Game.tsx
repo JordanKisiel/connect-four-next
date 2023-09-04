@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef, useLayoutEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { Difficulty } from "@/types"
@@ -17,6 +17,7 @@ import { MenuButton } from "./MenuButton"
 import Board from "./Board"
 import ColumnSelectButton from "./ColumnSelectButton"
 import ResultDisplay from "./ResultDisplay"
+import { gsap } from "gsap"
 
 type Props = {
     difficulty: Difficulty
@@ -58,6 +59,9 @@ export default function Game({ difficulty }: Props) {
     //this could be due to a win or a draw
     const [isGameOver, setIsGameOver] = useState(false)
 
+    //get ref for animation
+    const containerRef = useRef<HTMLDivElement | null>(null)
+
     useEffect(() => {
         //detect win by trying to get winning slots array
         //if array is empty then no win, otherwise there's a win
@@ -83,6 +87,21 @@ export default function Game({ difficulty }: Props) {
             playAIMove(getAIMove(board, difficulty))
         }
     }, [isPlayer1Turn, isPlayer1First])
+
+    useLayoutEffect(() => {
+        let context = gsap.context(() => {
+            const pageTimeline = gsap.timeline()
+
+            pageTimeline.from(containerRef.current, {
+                opacity: 0,
+                duration: 0.5,
+                ease: "back.out(1.7)",
+            })
+        })
+
+        //clean up function
+        return () => context.revert()
+    }, [])
 
     //takes in a column index (from getAIMove function)
     //calls handleColSelect with delays so player can see what is happening
@@ -211,6 +230,7 @@ export default function Game({ difficulty }: Props) {
 
     return (
         <div
+            ref={containerRef}
             className={`
                 relative
                 flex

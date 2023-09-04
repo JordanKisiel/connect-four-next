@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef, useLayoutEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import {
@@ -19,6 +19,7 @@ import ColumnSelectButton from "./ColumnSelectButton"
 import OnlineResultDisplay from "./OnlineResultDisplay"
 import Modal from "./Modal"
 import TurnTimer from "./TurnTimer"
+import { gsap } from "gsap"
 
 type GameState = "inactive" | "waiting" | "in_progress" | "over"
 
@@ -101,6 +102,9 @@ export default function OnlineGame({ gameID }: Props) {
         (isPlayer1 && playerSlots.playerSlot1.isReady) ||
         (!isPlayer1 && playerSlots.playerSlot2.isReady)
 
+    //get ref for animation
+    const containerRef = useRef<HTMLDivElement | null>(null)
+
     useEffect(() => {
         const clientID = getClientID()
 
@@ -134,6 +138,21 @@ export default function OnlineGame({ gameID }: Props) {
             socket.off("game_updated")
         }
     }, [])
+
+    useLayoutEffect(() => {
+        let context = gsap.context(() => {
+            const pageTimeline = gsap.timeline()
+
+            pageTimeline.from(containerRef.current, {
+                opacity: 0,
+                duration: 0.5,
+                ease: "back.out(1.7)",
+            })
+        })
+
+        //clean up function
+        return () => context.revert()
+    })
 
     //handles the change of column by incrementing or decrementing the index
     //also prevents index from moving out of bounds
@@ -178,6 +197,7 @@ export default function OnlineGame({ gameID }: Props) {
 
     return (
         <div
+            ref={containerRef}
             className={`relative
                 flex
                 h-full 

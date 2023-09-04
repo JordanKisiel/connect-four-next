@@ -1,5 +1,6 @@
 "use client"
 
+import { forwardRef } from "react"
 import Link from "next/link"
 import { socket } from "@/lib/socket"
 import { MenuButton } from "./MenuButton"
@@ -11,12 +12,10 @@ type Props = {
     isSlot2Filled: boolean
 }
 
-export default function Room({
-    gameID,
-    roomID,
-    isSlot1Filled,
-    isSlot2Filled,
-}: Props) {
+export const Room = forwardRef<HTMLDivElement, Props>(function Room(
+    { gameID, roomID, isSlot1Filled, isSlot2Filled },
+    ref
+) {
     function selectSlot(isPlayer1: boolean) {
         socket.emit("select_slot", {
             roomID,
@@ -26,6 +25,7 @@ export default function Room({
 
     return (
         <div
+            ref={ref}
             className="
                 relative 
                 flex 
@@ -104,4 +104,4 @@ export default function Room({
             </div>
         </div>
     )
-}
+})

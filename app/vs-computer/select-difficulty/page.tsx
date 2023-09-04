@@ -27,7 +27,7 @@ export default function Home() {
             pageTimeline.from(logoRef.current, {
                 rotate: -180,
                 opacity: 0,
-                duration: 0.5,
+                duration: 0.6,
                 ease: "back.out(1.7)",
             })
 
@@ -39,7 +39,7 @@ export default function Home() {
                     duration: 0.5,
                     ease: "back.out(1.7)",
                 },
-                ">-0.45"
+                ">-0.55"
             )
 
             pageTimeline.from(
