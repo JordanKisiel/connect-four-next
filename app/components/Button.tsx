@@ -1,5 +1,7 @@
 "use client"
 
+import { forwardRef } from "react"
+
 type Props = {
     textColor: string
     bgColor: string
@@ -8,15 +10,13 @@ type Props = {
     children: React.ReactNode
 }
 
-export default function Button({
-    textColor,
-    bgColor,
-    paddingX,
-    handler,
-    children,
-}: Props) {
+export const Button = forwardRef<HTMLButtonElement, Props>(function Button(
+    { textColor, bgColor, paddingX, handler, children },
+    ref
+) {
     return (
         <button
+            ref={ref}
             className={`${bgColor} 
                 ${textColor} 
                 rounded-full 
@@ -34,4 +34,4 @@ export default function Button({
             {children}
         </button>
     )
-}
+})
