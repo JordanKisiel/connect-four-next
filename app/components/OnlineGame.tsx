@@ -12,7 +12,7 @@ import {
 import { getClientID } from "@/lib/clientID"
 import { socket } from "@/lib/socket"
 import logo from "@/public/logo.svg"
-import Button from "./Button"
+import { Button } from "./Button"
 import { MenuButton } from "./MenuButton"
 import Board from "./Board"
 import ColumnSelectButton from "./ColumnSelectButton"

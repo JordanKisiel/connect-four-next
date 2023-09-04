@@ -12,7 +12,7 @@ import {
 } from "@/lib/connect4-utilities"
 import { getAIMove } from "@/lib/connect4-AI"
 import logo from "@/public/logo.svg"
-import Button from "./Button"
+import { Button } from "./Button"
 import { MenuButton } from "./MenuButton"
 import Board from "./Board"
 import ColumnSelectButton from "./ColumnSelectButton"
