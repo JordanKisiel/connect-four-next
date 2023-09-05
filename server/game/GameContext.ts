@@ -6,7 +6,7 @@ import {
 } from "../lib/connect4-utilities.ts"
 import { GameState } from "./state/GameState.ts"
 import { OverState } from "./state/OverState.ts"
-import { Board } from "../../types.ts"
+import { Board } from "../types.ts"
 import { InactiveState } from "./state/InactiveState.ts"
 import { Timer } from "./timer.ts"
 import { Player } from "../player.ts"
