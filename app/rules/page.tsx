@@ -85,9 +85,9 @@ export default async function Rules() {
                         border-[3px] 
                         border-neutral-900 
                         bg-neutral-100 
-                        px-6  
+                        px-6 
                         shadow-2xl
-                        sm:mx-4
+                        sm:mx-0
                         sm:space-y-4
                         sm:pb-11
                         sm:pt-6
