@@ -9,11 +9,14 @@ import { gsap } from "gsap"
 const ONE_DAY = 86400 //seconds in a day
 
 async function getRulesData() {
-    const res = await fetch("http://localhost:3000/api/rules", {
-        next: {
-            revalidate: ONE_DAY,
-        },
-    })
+    const res = await fetch(
+        "https://connect-four-next-client-gkpwrza3b-jordankisiel.vercel.app/api/rules",
+        {
+            next: {
+                revalidate: ONE_DAY,
+            },
+        }
+    )
 
     if (!res.ok) {
         throw new Error("Failed to fetch data")
