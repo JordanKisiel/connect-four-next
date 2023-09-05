@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    exclude: ["server"],
+    exclude: ["./server"],
 }
 
 module.exports = nextConfig
