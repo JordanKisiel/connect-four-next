@@ -4,7 +4,7 @@ import {
     BOARD_ROWS,
     BOARD_COLS,
     isColOpen,
-} from "../../../lib/connect4-utilities.ts"
+} from "../../lib/connect4-utilities.ts"
 import { GameContext } from "../GameContext.ts"
 import { GameState } from "./GameState.ts"
 import { InProgressState } from "./InProgressState.ts"

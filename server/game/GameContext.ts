@@ -3,7 +3,7 @@ import {
     BOARD_ROWS,
     BOARD_COLS,
     isColOpen,
-} from "../../lib/connect4-utilities.ts"
+} from "../lib/connect4-utilities.ts"
 import { GameState } from "./state/GameState.ts"
 import { OverState } from "./state/OverState.ts"
 import { Board } from "../../types.ts"

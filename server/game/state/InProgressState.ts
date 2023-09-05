@@ -1,9 +1,6 @@
 import { GameContext } from "../GameContext.ts"
 import { GameState } from "./GameState.ts"
-import {
-    getWinningSpaces,
-    isBoardFull,
-} from "../../../lib/connect4-utilities.ts"
+import { getWinningSpaces, isBoardFull } from "../../lib/connect4-utilities.ts"
 import { OverState } from "./OverState.ts"
 import { Player } from "@/player.ts"
 import { WaitingState } from "./WaitingState.ts"
