@@ -152,7 +152,7 @@ export default function OnlineGame({ gameID }: Props) {
 
         //clean up function
         return () => context.revert()
-    })
+    }, [])
 
     //handles the change of column by incrementing or decrementing the index
     //also prevents index from moving out of bounds
