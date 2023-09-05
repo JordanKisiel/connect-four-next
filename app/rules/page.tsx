@@ -1,30 +1,11 @@
 "use client"
 
+import rules from "../api/rules/rules.json"
 import { useRef, useLayoutEffect } from "react"
 import checkIcon from "@/public/icon-check.svg"
 import Link from "next/link"
 import Image from "next/image"
 import { gsap } from "gsap"
-
-const ONE_DAY = 86400 //seconds in a day
-
-async function getRulesData() {
-    const res = await fetch(
-        "https://connect-four-next-client-gkpwrza3b-jordankisiel.vercel.app/api/rules",
-        {
-            next: {
-                revalidate: ONE_DAY,
-            },
-        }
-    )
-
-    if (!res.ok) {
-        throw new Error("Failed to fetch data")
-    }
-
-    console.log(res)
-    return res.json()
-}
 
 export default async function Rules() {
     //get ref to container div & button for animation
@@ -57,14 +38,6 @@ export default async function Rules() {
         //clean up function
         return () => context.revert()
     }, [])
-
-    //hooks MUST be used before early returns
-    //this function could theoretically throw an error
-    const rules = await getRulesData()
-
-    if (rules === undefined) {
-        throw new Error("Did not fetch rules data")
-    }
 
     const procedureList: React.ReactNode[] = rules.content.howTo.procedure.map(
         (step: string) => (
