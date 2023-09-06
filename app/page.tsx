@@ -16,6 +16,8 @@ export default function Home() {
         gameID: "",
     })
 
+    const [isInitialRender, setIsInitialRender] = useState(true)
+
     //get ref to three menu buttons for animation
     const vsCpuRef = useRef<HTMLButtonElement | null>(null)
     const vsPlayerRef = useRef<HTMLButtonElement | null>(null)
@@ -64,6 +66,8 @@ export default function Home() {
     }, [])
 
     useLayoutEffect(() => {
+        setIsInitialRender(false)
+
         const buttonRefs = [
             rulesRef.current,
             vsPlayerRef.current,
@@ -116,7 +120,11 @@ export default function Home() {
     }
 
     return (
-        <div className="mt-[-5rem] flex w-full flex-col items-center md:max-w-[30rem]">
+        <div
+            className={`mt-[-5rem] flex w-full flex-col items-center md:max-w-[30rem] ${
+                isInitialRender ? "invisible" : ""
+            }`}
+        >
             <Image
                 className="mb-16 md:mb-20"
                 src={logo}
