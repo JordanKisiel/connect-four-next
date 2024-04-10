@@ -2,7 +2,7 @@ import Image from "next/image"
 import boardFG from "@/public/board.svg"
 import boardBG from "@/public/board-bg.svg"
 import Column from "./Column"
-import { Board } from "@/types"
+import { type Board } from "@/types"
 
 type Props = {
     numColumns: number
