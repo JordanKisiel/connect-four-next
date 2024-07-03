@@ -5,11 +5,10 @@ A web app implementation of the classic Connect Four game featuring a custom AI 
 ## Table of contents
 
 -   [Overview](#overview)
-    -   [Links](#links)
--   [My process](#my-process)
-    -   [Built with](#built-with)
-    -   [What I learned](#what-i-learned)
-    -   [Continued development](#continued-development)
+-   [Links](#links)
+-   [Built with](#built-with)
+-   [What I learned](#what-i-learned)
+-   [Continued development](#continued-development)
 -   [Author](#author)
 
 ![](./promo-image.png)
