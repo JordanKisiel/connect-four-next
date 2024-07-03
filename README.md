@@ -1,34 +1,42 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Connect Four - vs AI & Online 2 Player
 
-## Getting Started
+A web app implementation of the classic Connect Four game featuring a custom AI with three difficulty levels and online 2 player with a game server I wrote that can be found [here](https://github.com/JordanKisiel/connect-four-next-server).
 
-First, run the development server:
+## Table of contents
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+-   [Overview](#overview)
+    -   [Links](#links)
+-   [My process](#my-process)
+    -   [Built with](#built-with)
+    -   [What I learned](#what-i-learned)
+    -   [Continued development](#continued-development)
+-   [Author](#author)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+![](./promo-image.png)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Links
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+-   Live Site URL: [https://connect-four-next-client.vercel.app/](https://connect-four-next-client.vercel.app/)
+-   Detailed Breakdown: [https://jordankisiel.com/connect-four-breakdown](https://jordankisiel.com/connect-four-breakdown)
 
-## Learn More
+### Built with
 
-To learn more about Next.js, take a look at the following resources:
+-   Mobile-first workflow
+-   [Next.js](https://nextjs.org/) - Fullstack React Framework
+-   [Tailwindcss](https://tailwindcss.com/) - CSS framework
+-   [GSAP](https://gsap.com/) - Animation
+-   [TypeScript](https://www.typescriptlang.org/) - Language
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### What I learned
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+This is what I would consider to be my first fullstack project as it required writing a [server](https://github.com/JordanKisiel/connect-four-next-server) to allow for online 2 player. On the client side, I learned how to take the well-known minimax algorithm ([video explanation here](https://www.youtube.com/watch?v=l-hh51ncgDI)) and add my own customizations to it for both performance and behavior when creating my custom computer player. On the server side, I learned how to set up a simple server with Node and Express and how to use the [state pattern](https://www.youtube.com/watch?v=N12L5D78MAA) to organize the code that controls the state of the game in a much easier to understand way. Finally, from the fullstack perspective, I learned how to integrate the server and client, using [Socket.io](https://socket.io/) to pass messages updating lobby, game state, and player moves.
 
-## Deploy on Vercel
+### Continued development
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+At some point, I'd like to utilize websockets again to make more "multiplayer" style applications so I can learn how to tackle issues with syncing data as well learn best practices for integrating clients with servers in a more decoupled way.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## Author
+
+-   Website - [Jordan Kisiel](https://jordankisiel.com)
+-   Linkedin - [Jordan Kisiel](https://www.linkedin.com/in/jordan-kisiel-b60129114)
+-   Twitter - [@JordanKisiel](https://www.twitter.com/JordanKisiel)
