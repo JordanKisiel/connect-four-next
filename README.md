@@ -23,6 +23,8 @@ A web app implementation of the classic Connect Four game featuring a custom AI 
 
 -   Mobile-first workflow
 -   [Next.js](https://nextjs.org/) - Fullstack React Framework
+-   [Node](https://nodejs.org/en) - Server JavaScript Runtime
+-   [Express](https://expressjs.com/) - Web Framework for Node
 -   [Tailwindcss](https://tailwindcss.com/) - CSS framework
 -   [GSAP](https://gsap.com/) - Animation
 -   [TypeScript](https://www.typescriptlang.org/) - Language
