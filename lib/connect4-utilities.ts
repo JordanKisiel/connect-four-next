@@ -116,6 +116,15 @@ export function isWinner(isPlayer1: boolean, board: Board) {
 //iterate through each space on the board
 //if any are null (representing an empty space)
 //then board is not full
+
+/*** ADD TESTING STARTING HERE  ***/
+/* Cases:
+  -all spaces empty -> false
+  -all spaces true -> true
+  -all spaces false -> true
+  -only first space emtpy -> false
+  -only last space empty -> false
+*/
 export function isBoardFull(board: Board): boolean {
     for (let i = 0; i < board.length; i += 1) {
         for (let j = 0; j < board[0].length; j++) {
