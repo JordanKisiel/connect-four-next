@@ -113,18 +113,15 @@ export function isWinner(isPlayer1: boolean, board: Board) {
     }
 }
 
+//***TESTED */
 //iterate through each space on the board
 //if any are null (representing an empty space)
 //then board is not full
-
-/*** ADD TESTING STARTING HERE  ***/
-/* Cases:
-  -all spaces empty -> false
-  -all spaces true -> true
-  -all spaces false -> true
-  -only first space emtpy -> false
-  -only last space empty -> false
-*/
+//possible refactor: a better approach is to compare the total number
+//of moves and compare it to the total number of spaces,
+//assumming that the total number of moves is stored somewhere
+//however, checking it this way also serves as a independent
+//sanity check
 export function isBoardFull(board: Board): boolean {
     for (let i = 0; i < board.length; i += 1) {
         for (let j = 0; j < board[0].length; j++) {
@@ -137,24 +134,34 @@ export function isBoardFull(board: Board): boolean {
     return true
 }
 
+//***TESTED */
 //check every space and return true only if there are only empty spaces
+//possible refactor: a better approach is check whether the total number of moves
+//is greater than 0
+//however, checking it this way also serves as a independent
+//sanity check
 export function isBoardEmpty(board: Board): boolean {
-    let isEmpty = true
     for (let i = 0; i < board.length; i++) {
         for (let j = 0; j < board[0].length; j++) {
             if (board[i][j] !== null) {
-                isEmpty = false
+                return false
             }
         }
     }
 
-    return isEmpty
+    return true
 }
 
 //compares two consecutive board positions after a move
 //the column with non-equal number of discs is the last move that occured
-//will NOT work properly with two non-consecutive positons
-//TODO: guard against non-consecutive positions
+//will NOT work properly with two non-consecutive positions
+//Note:
+/*
+  -to fully guard against non-consecutive positions, I have to compare
+   the indices of each board and count the number of differences
+   -the differences should be exactly 1 after comparing all indices
+   -the curr board also must have 1 more total discs than the prev
+*/
 export function getLastMove(prevBoard: Board, currBoard: Board) {
     let lastMove = 0
     for (let i = 0; i < prevBoard.length; i++) {
@@ -174,10 +181,25 @@ export function getLastMove(prevBoard: Board, currBoard: Board) {
     return lastMove
 }
 
+//***TESTED */
+//Fixed bug where the arrays used for each column were actually
+//copies of the same array instead of different arrays
+//not exactly sure why this didn't cause bugs in the mechanics of the game
+//but my guess is that updating the board with array methods that
+//return new arrays essententially made it a non-issue
 export function getEmptyBoard(rows: number, cols: number): Board {
-    return Array(cols).fill(Array(rows).fill(null))
+    const board: (boolean | null)[][] = []
+    for (let i = 0; i < cols; i += 1) {
+        board[i] = []
+        for (let j = 0; j < rows; j += 1) {
+            board[i][j] = null
+        }
+    }
+
+    return board
 }
 
+//***TESTED */
 //gets sum of discs played by both players so far
 export function getTotalDiscs(board: Board): number {
     let totalDiscs = 0
@@ -193,6 +215,8 @@ export function getTotalDiscs(board: Board): number {
     return totalDiscs
 }
 
+//***TESTED */
+//checks the last index in each column, if it's empty
 export function getNumOpenCols(board: Board): number {
     let openCols = 0
 
@@ -206,12 +230,14 @@ export function getNumOpenCols(board: Board): number {
     return openCols
 }
 
-//return a boolean indicating if the given column has
-//an empty space availabe in the given board position
+//***TESTED */
+//return a boolean indicating if the specified column
+//is open for further moves
 export function isColOpen(board: Board, selectedCol: number) {
     return board[selectedCol].some((slot) => slot === null)
 }
 
+//***TESTED */
 //return the number of discs already played in a given column
 export function getDiscsInColumn(board: Board, colIndex: number) {
     let numDiscs = 0
