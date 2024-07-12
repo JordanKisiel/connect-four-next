@@ -155,14 +155,26 @@ export function isBoardEmpty(board: Board): boolean {
 //compares two consecutive board positions after a move
 //the column with non-equal number of discs is the last move that occured
 //will NOT work properly with two non-consecutive positions
-//Note:
-/*
-  -to fully guard against non-consecutive positions, I have to compare
-   the indices of each board and count the number of differences
-   -the differences should be exactly 1 after comparing all indices
-   -the curr board also must have 1 more total discs than the prev
-*/
+
 export function getLastMove(prevBoard: Board, currBoard: Board) {
+    let numDifferences = 0
+    for (let i = 0; i < currBoard.length; i += 1) {
+        for (let j = 0; j < currBoard[j].length; j += 1) {
+            if (prevBoard[i][j] !== currBoard[i][j]) {
+                numDifferences += 1
+
+                if (numDifferences > 1) {
+                    throw new Error("Two non-consecutive boards compared")
+                }
+            }
+        }
+    }
+
+    //there should be exactly 1 difference (the extra disc in currBoard)
+    if (numDifferences !== 1) {
+        throw new Error("Two non-consecutive boards compared")
+    }
+
     let lastMove = 0
     for (let i = 0; i < prevBoard.length; i++) {
         const prevNumOfDiscs = prevBoard[i].reduce((accum, curr) => {

@@ -7,6 +7,7 @@ import {
     getNumOpenCols,
     isColOpen,
     getDiscsInColumn,
+    getLastMove,
 } from "@/lib/connect4-utilities"
 
 const NUM_ROWS = 6
@@ -238,3 +239,113 @@ test("getDiscsInColumn: one filled space", () => {
 
     expect(getDiscsInColumn(board, 3)).toBe(1)
 })
+
+//----------------------------------------------------------------
+
+test("getLastMove: two consecutive boards - zero and one disc", () => {
+    const prevBoard = [
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+    ]
+
+    const currBoard = [
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [true, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+    ]
+
+    expect(getLastMove(prevBoard, currBoard)).toBe(4)
+})
+
+test("getLastMove: two consecutive boards - almost full and full", () => {
+    const prevBoard = [
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, null],
+    ]
+
+    const currBoard = [
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+    ]
+
+    expect(getLastMove(prevBoard, currBoard)).toBe(6)
+})
+
+test("getLastMove: non-consecutive - more than one difference", () => {
+    const prevBoard = [
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, null],
+    ]
+
+    const currBoard = [
+        [false, false, false, false, true, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+    ]
+
+    expect(getLastMove(prevBoard, currBoard)).toThrowError(
+        "Two non-consecutive boards compared"
+    )
+})
+
+test("getLastMove: non-consecutive - equal number of discs", () => {
+    const prevBoard = [
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, null],
+    ]
+
+    const currBoard = [
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, null],
+    ]
+
+    expect(getLastMove(prevBoard, currBoard)).toThrowError(
+        "Two non-consecutive boards compared"
+    )
+})
+
+//Note:
+/*
+  -to fully guard against non-consecutive positions, I have to compare
+   the indices of each board and count the number of differences
+   -the differences should be exactly 1 after comparing all indices
+   -the curr board also must have 1 more total discs than the prev
+*/
