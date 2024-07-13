@@ -156,6 +156,12 @@ export function isBoardEmpty(board: Board): boolean {
 //the column with non-equal number of discs is the last move that occured
 //will NOT work properly with two non-consecutive positions
 
+/* TODO:
+     -break up this function into 2
+       1) isConsectivePositions (prevBoard, currBoard): boolean
+       2) getLastMove (prevBoard, currBoard)
+          -use the first function to determine if an error should be thrown
+*/
 export function getLastMove(prevBoard: Board, currBoard: Board) {
     let numDifferences = 0
     for (let i = 0; i < currBoard.length; i += 1) {
