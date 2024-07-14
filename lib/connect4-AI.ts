@@ -6,6 +6,7 @@ import {
     getEmptyBoard,
     getTotalDiscs,
     getNumOpenCols,
+    isConsecutivePositions,
 } from "@/lib/connect4-utilities"
 
 //consective spaces on board
@@ -88,6 +89,10 @@ export function getAIMove(board: Board, difficulty: Difficulty): number {
         boardComplexity,
         difficultyAdjustment
     )
+
+    if (!isConsecutivePositions(board, bestMoves[randIndex][0])) {
+        throw new Error("Non-consecutive board positions")
+    }
 
     chosenMove = getLastMove(board, bestMoves[randIndex][0])
 

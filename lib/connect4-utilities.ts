@@ -152,35 +152,12 @@ export function isBoardEmpty(board: Board): boolean {
     return true
 }
 
+//***TESTED */
 //compares two consecutive board positions after a move
-//the column with non-equal number of discs is the last move that occured
-//will NOT work properly with two non-consecutive positions
-
-/* TODO:
-     -break up this function into 2
-       1) isConsectivePositions (prevBoard, currBoard): boolean
-       2) getLastMove (prevBoard, currBoard)
-          -use the first function to determine if an error should be thrown
-*/
+//and returns the index of the last move made
+//note: use isConsecutivePositions function to verify
+//valid board inputs for this function in client code
 export function getLastMove(prevBoard: Board, currBoard: Board) {
-    let numDifferences = 0
-    for (let i = 0; i < currBoard.length; i += 1) {
-        for (let j = 0; j < currBoard[j].length; j += 1) {
-            if (prevBoard[i][j] !== currBoard[i][j]) {
-                numDifferences += 1
-
-                if (numDifferences > 1) {
-                    throw new Error("Two non-consecutive boards compared")
-                }
-            }
-        }
-    }
-
-    //there should be exactly 1 difference (the extra disc in currBoard)
-    if (numDifferences !== 1) {
-        throw new Error("Two non-consecutive boards compared")
-    }
-
     let lastMove = 0
     for (let i = 0; i < prevBoard.length; i++) {
         const prevNumOfDiscs = prevBoard[i].reduce((accum, curr) => {
@@ -197,6 +174,37 @@ export function getLastMove(prevBoard: Board, currBoard: Board) {
     }
 
     return lastMove
+}
+
+//***TESTED */
+export function isConsecutivePositions(prevBoard: Board, currBoard: Board) {
+    //check disc totals
+    if (getTotalDiscs(currBoard) - getTotalDiscs(prevBoard) !== 1) {
+        return false
+    }
+
+    let numDifferences = 0
+    for (let i = 0; i < currBoard.length; i += 1) {
+        for (let j = 0; j < currBoard[j].length; j += 1) {
+            if (prevBoard[i][j] !== currBoard[i][j]) {
+                numDifferences += 1
+
+                if (numDifferences > 1) {
+                    return false
+                }
+            }
+        }
+    }
+
+    //there should be exactly 1 difference (the extra disc in currBoard)
+    //note: this check should really only be accounting for the case of 0
+    //differences (same positions) but checking for the less specific
+    //condition to be safe
+    if (numDifferences !== 1) {
+        return false
+    }
+
+    return true
 }
 
 //***TESTED */

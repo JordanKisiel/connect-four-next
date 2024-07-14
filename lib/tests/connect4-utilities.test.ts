@@ -7,6 +7,7 @@ import {
     getNumOpenCols,
     isColOpen,
     getDiscsInColumn,
+    isConsecutivePositions,
     getLastMove,
 } from "@/lib/connect4-utilities"
 
@@ -242,7 +243,7 @@ test("getDiscsInColumn: one filled space", () => {
 
 //----------------------------------------------------------------
 
-test("getLastMove: two consecutive boards - zero and one disc", () => {
+test("isConsecutivePositions: two consecutive boards - zero and one disc", () => {
     const prevBoard = [
         [null, null, null, null, null, null],
         [null, null, null, null, null, null],
@@ -263,10 +264,10 @@ test("getLastMove: two consecutive boards - zero and one disc", () => {
         [null, null, null, null, null, null],
     ]
 
-    expect(getLastMove(prevBoard, currBoard)).toBe(4)
+    expect(isConsecutivePositions(prevBoard, currBoard)).toBe(true)
 })
 
-test("getLastMove: two consecutive boards - almost full and full", () => {
+test("isConsecutivePositions: two consecutive boards - almost full and full", () => {
     const prevBoard = [
         [false, false, false, false, false, false],
         [false, false, false, false, false, false],
@@ -287,10 +288,10 @@ test("getLastMove: two consecutive boards - almost full and full", () => {
         [false, false, false, false, false, false],
     ]
 
-    expect(getLastMove(prevBoard, currBoard)).toBe(6)
+    expect(isConsecutivePositions(prevBoard, currBoard)).toBe(true)
 })
 
-test("getLastMove: non-consecutive - more than one difference", () => {
+test("isConsecutivePositions: non-consecutive - more than one difference", () => {
     const prevBoard = [
         [false, false, false, false, false, false],
         [false, false, false, false, false, false],
@@ -311,12 +312,10 @@ test("getLastMove: non-consecutive - more than one difference", () => {
         [false, false, false, false, false, false],
     ]
 
-    expect(getLastMove(prevBoard, currBoard)).toThrowError(
-        "Two non-consecutive boards compared"
-    )
+    expect(isConsecutivePositions(prevBoard, currBoard)).toBe(false)
 })
 
-test("getLastMove: non-consecutive - equal number of discs", () => {
+test("isConsecutivePositions: non-consecutive - same board positions", () => {
     const prevBoard = [
         [false, false, false, false, false, false],
         [false, false, false, false, false, false],
@@ -337,15 +336,127 @@ test("getLastMove: non-consecutive - equal number of discs", () => {
         [false, false, false, false, false, null],
     ]
 
-    expect(getLastMove(prevBoard, currBoard)).toThrowError(
-        "Two non-consecutive boards compared"
-    )
+    expect(isConsecutivePositions(prevBoard, currBoard)).toBe(false)
 })
 
-//Note:
-/*
-  -to fully guard against non-consecutive positions, I have to compare
-   the indices of each board and count the number of differences
-   -the differences should be exactly 1 after comparing all indices
-   -the curr board also must have 1 more total discs than the prev
-*/
+test("isConsecutivePositions: non-consecutive - one difference, equal discs", () => {
+    const prevBoard = [
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [true, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, null],
+    ]
+
+    const currBoard = [
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, null],
+    ]
+
+    expect(isConsecutivePositions(prevBoard, currBoard)).toBe(false)
+})
+
+//----------------------------------------------------------------
+
+test("getLastMove: last index", () => {
+    const prevBoard = [
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, null, null],
+    ]
+
+    const currBoard = [
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, null],
+    ]
+
+    expect(getLastMove(prevBoard, currBoard)).toBe(6)
+})
+
+test("getLastMove: first index", () => {
+    const prevBoard = [
+        [false, false, false, false, null, null],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, null],
+    ]
+
+    const currBoard = [
+        [false, false, false, false, false, null],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, false],
+        [false, false, false, false, false, null],
+    ]
+
+    expect(getLastMove(prevBoard, currBoard)).toBe(0)
+})
+
+test("getLastMove: first move", () => {
+    const prevBoard = [
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+    ]
+
+    const currBoard = [
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [true, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+    ]
+
+    expect(getLastMove(prevBoard, currBoard)).toBe(3)
+})
+
+test("getLastMove: last possible move", () => {
+    const prevBoard = [
+        [true, true, true, true, true, true],
+        [true, true, true, true, true, true],
+        [true, true, true, true, true, true],
+        [true, true, true, true, true, null],
+        [true, true, true, true, true, true],
+        [true, true, true, true, true, true],
+        [true, true, true, true, true, true],
+    ]
+
+    const currBoard = [
+        [true, true, true, true, true, true],
+        [true, true, true, true, true, true],
+        [true, true, true, true, true, true],
+        [true, true, true, true, true, true],
+        [true, true, true, true, true, true],
+        [true, true, true, true, true, true],
+        [true, true, true, true, true, true],
+    ]
+
+    expect(getLastMove(prevBoard, currBoard)).toBe(3)
+})
