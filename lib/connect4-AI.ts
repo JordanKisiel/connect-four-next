@@ -107,7 +107,7 @@ export function getAIMove(board: Board, difficulty: Difficulty): number {
 //index ranges from 0 inclusive to weights.length exclusive
 //basic algorithm from:
 //https://stackoverflow.com/a/8435261/20048656
-function chooseIndex(
+export function chooseIndex(
     weights: number[],
     boardComplexity: number,
     subOptimalAdj: number
@@ -128,7 +128,7 @@ function chooseIndex(
 
 //function returns max score it can find assuming other player is also
 //playing perfectly
-function minimax(
+export function minimax(
     board: Board,
     depth: number,
     isMaximizingPlayer: boolean
@@ -162,7 +162,7 @@ function minimax(
 
 //returns an evaluation score total based upon board position
 //evaluates positive for player that goes first and negative for second
-function getEvaluation(board: Board): number {
+export function getEvaluation(board: Board): number {
     //score settings
     const centerColScore = 4
     const lineOf2Score = 2
@@ -228,7 +228,7 @@ function getEvaluation(board: Board): number {
 //TODO: it's possible that I made this function more complex than it needs to be, review it
 //internal canMakeWinningLine function also has side effect (duplicatedLinesCount)
 //which is pretty ugly
-function getNumLinesOf2(board: Board, player: boolean) {
+export function getNumLinesOf2(board: Board, player: boolean) {
     let linesOf2 = []
     const width = board.length
     const height = board[0].length
@@ -489,7 +489,10 @@ function getNumLinesOf2(board: Board, player: boolean) {
 
 //return the number of lines of 3
 //(used for position evaluation)
-function getNumLinesOf3(board: Board, player: boolean) {
+//TODO: it's possible that I made this function more complex than it needs to be, review it
+//internal canMakeWinningLine function also has side effect (duplicatedLinesCount)
+//which is pretty ugly
+export function getNumLinesOf3(board: Board, player: boolean) {
     let linesOf3 = []
     const width = board.length
     const height = board[0].length
@@ -731,7 +734,14 @@ function getNumLinesOf3(board: Board, player: boolean) {
 }
 
 //returns every single possible next board from the current board position
-function getChildPositions(board: Board, isMaximizingPlayer: boolean) {
+/* TODO:
+  -test cases:
+    x-all columns open -> 7 child pos
+    x-no columns open -> 0 child pos
+    -1 column open (but multiple spaces) -> 1 child pos
+
+*/
+export function getChildPositions(board: Board, isMaximizingPlayer: boolean) {
     let childPositions = []
 
     //for each column
