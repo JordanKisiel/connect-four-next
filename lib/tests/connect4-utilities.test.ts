@@ -9,6 +9,8 @@ import {
     getDiscsInColumn,
     isConsecutivePositions,
     getLastMove,
+    getWinningSpaces,
+    isWinner,
 } from "@/lib/connect4-utilities"
 
 const NUM_ROWS = 6
@@ -459,4 +461,334 @@ test("getLastMove: last possible move", () => {
     ]
 
     expect(getLastMove(prevBoard, currBoard)).toBe(3)
+})
+
+//----------------------------------------------------------------
+
+test("getWinningSpaces: empty board", () => {
+    const board = [
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+    ]
+
+    expect(getWinningSpaces(board)).toStrictEqual([])
+})
+
+test("getWinningSpaces: diagonal winner - top left", () => {
+    const board = [
+        [true, null, null, null, null, null],
+        [null, true, null, null, null, null],
+        [null, null, true, null, null, null],
+        [null, null, null, true, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+    ]
+
+    expect(getWinningSpaces(board)).toStrictEqual([
+        [0, 0],
+        [1, 1],
+        [2, 2],
+        [3, 3],
+    ])
+})
+
+test("getWinningSpaces: diagonal winner - top right", () => {
+    const board = [
+        [true, null, null, null, null, false],
+        [null, true, null, null, false, null],
+        [null, null, true, false, null, null],
+        [null, null, false, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+    ]
+
+    expect(getWinningSpaces(board)).toStrictEqual([
+        [0, 5],
+        [1, 4],
+        [2, 3],
+        [3, 2],
+    ])
+})
+
+test("getWinningSpaces: diagonal winner - bottom left", () => {
+    const board = [
+        [true, null, null, null, null, false],
+        [null, true, null, null, false, null],
+        [null, null, null, false, null, null],
+        [null, null, null, true, null, null],
+        [null, null, true, null, null, null],
+        [null, true, null, null, null, null],
+        [true, null, null, null, null, null],
+    ]
+
+    expect(getWinningSpaces(board)).toStrictEqual([
+        [3, 3],
+        [4, 2],
+        [5, 1],
+        [6, 0],
+    ])
+})
+
+test("getWinningSpaces: diagonal winner - bottom right", () => {
+    const board = [
+        [true, null, null, null, null, false],
+        [null, true, null, null, false, null],
+        [null, null, null, true, null, null],
+        [null, null, false, false, null, null],
+        [null, null, true, false, null, null],
+        [null, true, null, null, false, null],
+        [true, null, null, null, null, false],
+    ]
+
+    expect(getWinningSpaces(board)).toStrictEqual([
+        [3, 2],
+        [4, 3],
+        [5, 4],
+        [6, 5],
+    ])
+})
+
+test("getWinningSpaces: horizontal winner - top left", () => {
+    const board = [
+        [true, true, true, true, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+    ]
+
+    expect(getWinningSpaces(board)).toStrictEqual([
+        [0, 0],
+        [0, 1],
+        [0, 2],
+        [0, 3],
+    ])
+})
+
+test("getWinningSpaces: horizontal winner - top right", () => {
+    const board = [
+        [false, false, true, true, true, true],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+    ]
+
+    expect(getWinningSpaces(board)).toStrictEqual([
+        [0, 2],
+        [0, 3],
+        [0, 4],
+        [0, 5],
+    ])
+})
+
+test("getWinningSpaces: horizontal winner - bottom left", () => {
+    const board = [
+        [false, false, true, true, true, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [true, true, true, true, null, null],
+    ]
+
+    expect(getWinningSpaces(board)).toStrictEqual([
+        [6, 0],
+        [6, 1],
+        [6, 2],
+        [6, 3],
+    ])
+})
+
+test("getWinningSpaces: horizontal winner - bottom right", () => {
+    const board = [
+        [false, false, true, true, true, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [true, true, false, false, false, false],
+    ]
+
+    expect(getWinningSpaces(board)).toStrictEqual([
+        [6, 2],
+        [6, 3],
+        [6, 4],
+        [6, 5],
+    ])
+})
+
+test("getWinningSpaces: vertical winner - top left", () => {
+    const board = [
+        [true, null, null, null, null, null],
+        [true, null, null, null, null, null],
+        [true, null, null, null, null, null],
+        [true, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+    ]
+
+    expect(getWinningSpaces(board)).toStrictEqual([
+        [0, 0],
+        [1, 0],
+        [2, 0],
+        [3, 0],
+    ])
+})
+
+test("getWinningSpaces: vertical winner - top right", () => {
+    const board = [
+        [true, null, null, null, null, false],
+        [true, null, null, null, null, false],
+        [true, null, null, null, null, false],
+        [null, null, null, null, null, false],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+    ]
+
+    expect(getWinningSpaces(board)).toStrictEqual([
+        [0, 5],
+        [1, 5],
+        [2, 5],
+        [3, 5],
+    ])
+})
+
+test("getWinningSpaces: vertical winner - bottom left", () => {
+    const board = [
+        [true, null, null, null, null, false],
+        [true, null, null, null, null, false],
+        [true, null, null, null, null, false],
+        [false, null, null, null, null, null],
+        [false, null, null, null, null, null],
+        [false, null, null, null, null, null],
+        [false, null, null, null, null, null],
+    ]
+
+    expect(getWinningSpaces(board)).toStrictEqual([
+        [3, 0],
+        [4, 0],
+        [5, 0],
+        [6, 0],
+    ])
+})
+
+test("getWinningSpaces: vertical winner - bottom right", () => {
+    const board = [
+        [true, null, null, null, null, false],
+        [true, null, null, null, null, false],
+        [true, null, null, null, null, false],
+        [null, null, null, null, null, true],
+        [false, null, null, null, null, true],
+        [false, null, null, null, null, true],
+        [false, null, null, null, null, true],
+    ]
+
+    expect(getWinningSpaces(board)).toStrictEqual([
+        [3, 5],
+        [4, 5],
+        [5, 5],
+        [6, 5],
+    ])
+})
+
+//----------------------------------------------------------------
+
+test("isWinner: isPlayer1 & empty board", () => {
+    const board = [
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+    ]
+
+    expect(isWinner(true, board)).toBe(false)
+})
+
+test("isWinner: !isPlayer1 & empty board", () => {
+    const board = [
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+    ]
+
+    expect(isWinner(false, board)).toBe(false)
+})
+
+test("isWinner: isPlayer1 & player1 wins", () => {
+    const board = [
+        [true, null, null, null, null, null],
+        [null, true, null, null, null, null],
+        [null, null, true, null, null, null],
+        [null, null, null, true, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+    ]
+
+    expect(isWinner(true, board)).toBe(true)
+})
+
+test("isWinner: isPlayer1 & player2 wins", () => {
+    const board = [
+        [false, null, null, null, null, null],
+        [false, true, null, null, null, null],
+        [false, null, true, null, null, null],
+        [false, null, null, true, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+    ]
+
+    expect(isWinner(true, board)).toBe(false)
+})
+
+test("isWinner: !isPlayer1 & player2 wins", () => {
+    const board = [
+        [false, null, null, null, null, null],
+        [false, true, null, null, null, null],
+        [false, null, true, null, null, null],
+        [false, null, null, true, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+    ]
+
+    expect(isWinner(false, board)).toBe(true)
+})
+
+test("isWinner: !isPlayer1 & player1 wins", () => {
+    const board = [
+        [false, null, null, null, null, null],
+        [false, true, null, null, null, null],
+        [false, null, true, null, null, null],
+        [null, null, null, true, null, null],
+        [null, null, null, null, true, null],
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+    ]
+
+    expect(isWinner(false, board)).toBe(false)
 })

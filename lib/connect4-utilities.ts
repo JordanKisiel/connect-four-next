@@ -9,7 +9,6 @@ export const BOARD_COLS = 7
 //this can also be used to detect if there's a win by using the length of the resulting array
 //basic algoritm from:
 //https://codereview.stackexchange.com/a/127105
-
 export function getWinningSpaces(board: Board): number[][] | [] {
     const height = board[0].length
     const width = board.length
@@ -99,21 +98,15 @@ export function getWinningSpaces(board: Board): number[][] | [] {
 export function isWinner(isPlayer1: boolean, board: Board) {
     const winningSpaces = getWinningSpaces(board)
 
-    if (winningSpaces.length > 0) {
-        const [xCoord, yCoord] = winningSpaces[0]
-        if (isPlayer1 && board[xCoord][yCoord]) {
-            return true
-        } else if (!isPlayer1 && !board[xCoord][yCoord]) {
-            return true
-        } else {
-            return false
-        }
-    } else {
-        return false
-    }
+    if (winningSpaces.length === 0) return false
+
+    const [xCoord, yCoord] = winningSpaces[0]
+    if (isPlayer1 && board[xCoord][yCoord]) return true
+    if (!isPlayer1 && !board[xCoord][yCoord]) return true
+
+    return false
 }
 
-//***TESTED */
 //iterate through each space on the board
 //if any are null (representing an empty space)
 //then board is not full
@@ -134,7 +127,6 @@ export function isBoardFull(board: Board): boolean {
     return true
 }
 
-//***TESTED */
 //check every space and return true only if there are only empty spaces
 //possible refactor: a better approach is check whether the total number of moves
 //is greater than 0
@@ -152,7 +144,6 @@ export function isBoardEmpty(board: Board): boolean {
     return true
 }
 
-//***TESTED */
 //compares two consecutive board positions after a move
 //and returns the index of the last move made
 //note: use isConsecutivePositions function to verify
@@ -176,7 +167,6 @@ export function getLastMove(prevBoard: Board, currBoard: Board) {
     return lastMove
 }
 
-//***TESTED */
 export function isConsecutivePositions(prevBoard: Board, currBoard: Board) {
     //check disc totals
     if (getTotalDiscs(currBoard) - getTotalDiscs(prevBoard) !== 1) {
@@ -207,7 +197,6 @@ export function isConsecutivePositions(prevBoard: Board, currBoard: Board) {
     return true
 }
 
-//***TESTED */
 //Fixed bug where the arrays used for each column were actually
 //copies of the same array instead of different arrays
 //not exactly sure why this didn't cause bugs in the mechanics of the game
@@ -225,7 +214,6 @@ export function getEmptyBoard(rows: number, cols: number): Board {
     return board
 }
 
-//***TESTED */
 //gets sum of discs played by both players so far
 export function getTotalDiscs(board: Board): number {
     let totalDiscs = 0
@@ -241,7 +229,6 @@ export function getTotalDiscs(board: Board): number {
     return totalDiscs
 }
 
-//***TESTED */
 //checks the last index in each column, if it's empty
 export function getNumOpenCols(board: Board): number {
     let openCols = 0
@@ -256,14 +243,12 @@ export function getNumOpenCols(board: Board): number {
     return openCols
 }
 
-//***TESTED */
 //return a boolean indicating if the specified column
 //is open for further moves
 export function isColOpen(board: Board, selectedCol: number) {
     return board[selectedCol].some((slot) => slot === null)
 }
 
-//***TESTED */
 //return the number of discs already played in a given column
 export function getDiscsInColumn(board: Board, colIndex: number) {
     let numDiscs = 0
