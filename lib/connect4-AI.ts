@@ -1,3 +1,4 @@
+import Rand from "rand-seed"
 import { Board, Difficulty } from "@/types"
 import {
     getLastMove,
@@ -100,22 +101,38 @@ export function getAIMove(board: Board, difficulty: Difficulty): number {
 }
 
 //picks a random index from array of weights
-//also takes into account the board complexity,
-//which increases as the game goes along,
-//and a constant adjusting how quickly sub optimal moves
-//will tend to be chosen
-//index ranges from 0 inclusive to weights.length exclusive
+//used by the AI to pick moves in a weighted random way
 //basic algorithm from:
 //https://stackoverflow.com/a/8435261/20048656
 export function chooseIndex(
     weights: number[],
     boardComplexity: number,
-    subOptimalAdj: number
+    subOptimalAdj: number,
+    seed: string | undefined = undefined
 ) {
     let sum = 0
-    let adjustedRandNum = Math.random() * boardComplexity * subOptimalAdj
+
+    //define rng to be used
+    //optional seed parameter is used to specify
+    //seed for testing purposes
+    let rand = null
+
+    if (seed !== undefined) {
+        rand = new Rand("1234")
+    } else {
+        rand = new Rand()
+    }
+    //use boardComplexity measure (based on total discs on board)
+    //and sub-optimal move adjustment constant to weight
+    //random number
+    let adjustedRandNum = rand.next() * boardComplexity * subOptimalAdj
+    //set random result to 1 if greater than 1 (otherwise do nothing)
     adjustedRandNum = adjustedRandNum > 1 ? 1 : adjustedRandNum
 
+    //keep interating through weights, adding weight at the current
+    //index to a running sum and return the current index when
+    //the running summing is >= to the weighted random number
+    //generated above
     for (let i = 0; i < weights.length; i += 1) {
         sum += weights[i]
         if (adjustedRandNum <= sum) {
@@ -123,6 +140,8 @@ export function chooseIndex(
         }
     }
 
+    //if running sum never exceeds weighted random number
+    //return 0 index by default
     return 0
 }
 
@@ -733,14 +752,8 @@ export function getNumLinesOf3(board: Board, player: boolean) {
     return linesOf3.length - duplicatedLinesCount / 2
 }
 
-//returns every single possible next board from the current board position
-/* TODO:
-  -test cases:
-    x-all columns open -> 7 child pos
-    x-no columns open -> 0 child pos
-    -1 column open (but multiple spaces) -> 1 child pos
-
-*/
+/* TESTED */
+//returns an array of every possible next board from the current board position
 export function getChildPositions(board: Board, isMaximizingPlayer: boolean) {
     let childPositions = []
 
