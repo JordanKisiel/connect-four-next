@@ -171,19 +171,19 @@ test("chooseIndex: only 1 col open, 1 space open, hard", () => {
 })
 
 test("chooseIndex: only 2 col open, fully open, easy", () => {
-    expect(chooseIndex(TWO_INDICES, (1 / 2) * NUM_ROWS, EASY_DIFF, SEED)).toBe(
+    expect(chooseIndex(TWO_INDICES, 1 / (2 * NUM_ROWS), EASY_DIFF, SEED)).toBe(
         1
     )
 })
 
 test("chooseIndex: only 2 col open, fully open, medium", () => {
     expect(
-        chooseIndex(TWO_INDICES, (1 / 2) * NUM_ROWS, MEDIUM_DIFF, SEED)
+        chooseIndex(TWO_INDICES, 1 / (2 * NUM_ROWS), MEDIUM_DIFF, SEED)
     ).toBe(0)
 })
 
 test("chooseIndex: only 2 col open, fully open, hard", () => {
-    expect(chooseIndex(TWO_INDICES, (1 / 2) * NUM_ROWS, HARD_DIFF, SEED)).toBe(
+    expect(chooseIndex(TWO_INDICES, 1 / (2 * NUM_ROWS), HARD_DIFF, SEED)).toBe(
         0
     )
 })
@@ -202,19 +202,19 @@ test("chooseIndex: only 2 col open, 1 space open, hard", () => {
 
 test("chooseIndex: 3 col open, fully open, easy", () => {
     expect(
-        chooseIndex(THREE_INDICES, (1 / 3) * NUM_ROWS, EASY_DIFF, SEED)
+        chooseIndex(THREE_INDICES, 1 / (3 * NUM_ROWS), EASY_DIFF, SEED)
     ).toBe(0)
 })
 
 test("chooseIndex: 3 col open, fully open, medium", () => {
     expect(
-        chooseIndex(THREE_INDICES, (1 / 3) * NUM_ROWS, MEDIUM_DIFF, SEED)
+        chooseIndex(THREE_INDICES, 1 / (3 * NUM_ROWS), MEDIUM_DIFF, SEED)
     ).toBe(0)
 })
 
 test("chooseIndex: 3 col open, fully open, hard", () => {
     expect(
-        chooseIndex(THREE_INDICES, (1 / 3) * NUM_ROWS, HARD_DIFF, SEED)
+        chooseIndex(THREE_INDICES, 1 / (3 * NUM_ROWS), HARD_DIFF, SEED)
     ).toBe(0)
 })
 
@@ -244,18 +244,18 @@ test("chooseIndex: all col open, 1 space open, hard", () => {
 
 test("chooseIndex: all col open, all spaces open, easy", () => {
     expect(
-        chooseIndex(THREE_INDICES, (1 / NUM_ROWS) * NUM_COLS, EASY_DIFF, SEED)
+        chooseIndex(THREE_INDICES, 1 / (NUM_ROWS * NUM_COLS), EASY_DIFF, SEED)
     ).toBe(0)
 })
 
 test("chooseIndex: all col open, all spaces open, medium", () => {
     expect(
-        chooseIndex(THREE_INDICES, (1 / NUM_ROWS) * NUM_COLS, MEDIUM_DIFF, SEED)
+        chooseIndex(THREE_INDICES, 1 / (NUM_ROWS * NUM_COLS), MEDIUM_DIFF, SEED)
     ).toBe(0)
 })
 
 test("chooseIndex: all col open, all spaces open, hard", () => {
     expect(
-        chooseIndex(THREE_INDICES, (1 / NUM_ROWS) * NUM_COLS, HARD_DIFF, SEED)
+        chooseIndex(THREE_INDICES, 1 / (NUM_ROWS * NUM_COLS), HARD_DIFF, SEED)
     ).toBe(0)
 })
