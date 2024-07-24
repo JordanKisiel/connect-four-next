@@ -100,6 +100,7 @@ export function getAIMove(board: Board, difficulty: Difficulty): number {
     return chosenMove
 }
 
+/* TESTED */
 //picks a random index from array of weights
 //used by the AI to pick moves in a weighted random way
 //basic algorithm from:
@@ -243,6 +244,9 @@ export function getEvaluation(board: Board): number {
     return evalScore
 }
 
+/* Test this function next */
+/* FOUND BUG, FIX DURING REFACTOR */
+/* After setting up tests, refactor this function, if possible */
 //returns the number of lines of 2 (used for position evaluation)
 //TODO: it's possible that I made this function more complex than it needs to be, review it
 //internal canMakeWinningLine function also has side effect (duplicatedLinesCount)
