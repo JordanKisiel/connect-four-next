@@ -244,6 +244,22 @@ export function getEvaluation(board: Board): number {
     return evalScore
 }
 
+/* IN PROGRESS */
+//returns object with data about the current position
+//relevant to evaluation of the position
+//doing it this way allows for scanning of the board once
+//additionally, it hopefully allows me to reduce duplicated
+//logic
+export function getEvalData(board: Board, currentPlayer: boolean) {
+    /*
+    Data relevant to evaluating the position:
+      -winningSpaces
+      -discs in center for each player
+      -numLinesOf2 for each player
+      -numLinesOf3 for each player
+    */
+}
+
 /* Test this function next */
 /* FOUND BUG, FIX DURING REFACTOR */
 /* After setting up tests, refactor this function, if possible */
